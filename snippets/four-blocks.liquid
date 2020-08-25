@@ -1,0 +1,22 @@
+<!-- Reopen .wrapper after featured-collections -->
+<div class="wrapper">
+  
+{% if settings.show_block_heading %}
+<div class="section-header text-center follow-us">
+  <h2 class="h3 section-header__title">{{ settings.block_heading }}</h2>
+</div>
+{% endif %}
+
+<div class="grid blocks-wrap">
+
+  {% for i in (1..4) %}
+  {% capture block_img %}block{{ i }}.png{% endcapture %}
+  {% capture block_url %}block{{ i }}_url{% endcapture %}
+  <div class="grid__item one-whole small--one-half medium--one-quarter large--one-quarter text-center">
+    <a href="{{ settings[block_url] }}">
+      <img src="{{ block_img | asset_url }}" />
+    </a>
+  </div>
+
+  {% endfor %}
+</div>

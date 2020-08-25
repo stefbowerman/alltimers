@@ -1,0 +1,57 @@
+<!-- /templates/blog.liquid -->
+{% paginate blog.articles by 30 %}
+<div id='blog_page'>
+  <div class="grid">
+
+    <div class="grid__item large--five-sixths push--large--one-twelfth">
+
+      <header class="section-header text-center">
+        <h1>
+          {% if current_tags %}
+          {{ blog.title | link_to: blog.url }} &mdash; {{ current_tags.first }}
+          {% else %}
+          {{ blog.title }}
+          {% endif %}
+          {%- comment -%}
+          <a href="{{ shop.url }}{{ blog.url }}.atom" class="icon-fallback-text rss-link">
+            <span class="icon icon-rss" aria-hidden="true"></span>
+            <span class="fallback-text">RSS</span>
+          </a>
+          {%- endcomment -%}
+        </h1>
+        <hr class="hr--small">
+      </header>
+      <div class='article_wrap'>
+        {% for article in blog.articles %}
+
+        {% assign article_content = article.excerpt_or_content %}
+        {% assign featured_image_src = '' %}
+
+        {% if article.image %}
+        {% assign featured_image_src = article | img_url: 'grande' %}
+        {% elsif article_content contains '<img' %}
+        {% assign featured_image_src = article_content | split: 'src="' %}
+        {% assign featured_image_src = featured_image_src[1] | split: '"' | first %}
+        {% endif %}
+        {%- unless featured_image_src == blank -%}
+        <article class="article  small--text-center">
+          <a href='{{article.url}}'>
+            <img src='{{featured_image_src}}' alt='{{article.title}}'>
+            <a class='text_wrap' href='{{article.url}}'>
+              <span class='title'>{{article.title}}</span>
+            </a>
+          </a>
+        </article>
+        {%- endunless -%}
+        {% endfor %}
+      </div>
+      {% if paginate.pages > 1 %}
+      <div class="pagination">
+        {{ paginate | default_pagination | replace: '&laquo; Previous', '<span class="icon icon-arrow-left" aria-hidden="true"></span>' | replace: 'Next &raquo;', '<span class="icon icon-arrow-right" aria-hidden="true"></span>' }}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endpaginate %}

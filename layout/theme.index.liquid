@@ -1,0 +1,566 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+<script>
+  window.simply = window.simply || {};
+  window.cn = function(o){return"undefined"==typeof o||null==o||""==o.toString().trim()};
+  window.cb = function(o){if(o == 'true'){return true}else{return false}};
+</script>
+  <!-- Basic page needs ================================================== -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  {% if settings.favicon_enable %}
+  <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+  {% endif %}
+
+  <!-- Title and description ================================================== -->
+  <title>
+    {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if page_description %}
+  <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  <!-- Helpers ================================================== -->
+  {% include 'social-meta-tags' %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+
+  <!-- CSS ================================================== -->
+  {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'theme.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'themenew.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'flexslider.css' | asset_url | stylesheet_tag }}
+  {% include 'google-fonts' %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css">
+
+  <!-- Header hook for plugins ================================================== -->
+  {{ content_for_header }}
+  {% include 'oldIE-js' %}
+
+  {{ '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' | script_tag }}
+  {{ 'modernizr.min.js' | asset_url | script_tag }}
+
+  {% comment %}
+  If you store has customer accounts disabled, you can remove the following JS file
+  {% endcomment %}
+  {% if template contains 'customers' %}
+  {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+  {% endif %}
+	{% if template == 'index' and settings.instagram_id != blank%}
+  {{ 'instafeed.js' | asset_url | script_tag }}
+  {% endif %}
+  
+  {{ 'jquery.sticky.js' | asset_url | script_tag }}
+  {{ 'froogaloop2.min.js' | asset_url | script_tag }}
+  {{ 'jquery.flexslider.js' | asset_url | script_tag }}
+  
+
+  
+</head>
+
+{% comment %}
+Add the page template as a class for easy page or template specific styling.
+{% endcomment %}
+<body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}">
+
+  <div id="NavDrawer" class="drawer drawer--left">
+    <div class="drawer__fixed-header">
+      <div class="drawer__header">
+        <div class="drawer__close drawer__close--left">
+          <button type="button" class="icon-fallback-text drawer__close-button js-drawer-close">
+            <span class="icon icon-x" aria-hidden="true"></span>
+            <span class="fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="drawer__inner">
+      <div class="currency-picker-mobile">{% include 'currency-picker' %}</div>
+      {% comment %}
+      Remove comment tags below to add a search box at the top of your pull-out menu.
+      {% endcomment %}
+
+      {% comment %}
+      {% include 'search-bar', search_btn_style: 'btn--secondary', search_bar_location: 'search-bar--drawer' %}
+      {% endcomment %}
+
+      <!-- begin mobile-nav -->
+      <ul class="mobile-nav">
+        {% for link in linklists[settings.header_menu].links %}
+        {% comment %}
+        Create a dropdown menu by naming a linklist the same as a link in the parent nav
+
+        More info on dropdowns:
+        - http://docs.shopify.com/manual/your-website/navigation/create-drop-down-menu
+        {% endcomment %}
+        {% assign child_list_handle = link.title | handleize %}
+        {% if linklists[child_list_handle].links != blank %}
+        <li class="mobile-nav__item{% unless template == 'index' %}{% if link.active %} mobile-nav__item--active{% endif %}{% endunless %}">
+          <div class="mobile-nav__has-sublist">
+            <a href="{{ link.url }}" class="mobile-nav__link" id="Label-{{ child_list_handle }}">{{ link.title }}</a>
+            <div class="mobile-nav__toggle">
+              <button type="button" class="mobile-nav__toggle-btn icon-fallback-text" data-aria-controls="Linklist-{{ child_list_handle }}">
+                <span class="icon-fallback-text mobile-nav__toggle-open">
+                  <span class="icon icon-plus" aria-hidden="true"></span>
+                  <span class="fallback-text">{{ 'general.drawers.expand_submenu' | t }}</span>
+                </span>
+                <span class="icon-fallback-text mobile-nav__toggle-close">
+                  <span class="icon icon-minus" aria-hidden="true"></span>
+                  <span class="fallback-text">{{ 'general.drawers.collapse_submenu' | t }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
+          <ul class="mobile-nav__sublist" id="Linklist-{{ child_list_handle }}" aria-labelledby="Label-{{ child_list_handle }}" role="navigation">
+            {% for childlink in linklists[child_list_handle].links %}
+            <li class="mobile-nav__item{% unless template == 'index' %}{% if childlink.active %} mobile-nav__item--active{% endif %}{% endunless %}">
+              <a href="{{ childlink.url }}" class="mobile-nav__link">{{ childlink.title | escape }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% else %}
+        <li class="mobile-nav__item{% unless template == 'index' %}{% if link.active %} mobile-nav__item--active{% endif %}{% endunless %}">
+          <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% comment %}
+        Spacer element
+        {% endcomment %}
+        <!--         <li class="mobile-nav__spacer"></li> -->
+
+        {% comment %}
+        If customer accounts are enabled, provide login and create account links
+        {% endcomment %}
+        {% if shop.customer_accounts_enabled %}
+        {% if customer %}
+        <li class="mobile-nav__item mobile-nav__item--secondary">
+          <a href="/account">{{ 'layout.customer.account' | t }}</a>
+        </li>
+        <li class="mobile-nav__item mobile-nav__item--secondary">
+          {{ 'layout.customer.log_out' | t | customer_logout_link }}
+        </li>
+        {% else %}
+        <li class="mobile-nav__item mobile-nav__item--secondary">
+          {{ 'layout.customer.log_in' | t | customer_login_link }}
+        </li>
+        <li class="mobile-nav__item mobile-nav__item--secondary">
+          {{ 'layout.customer.create_account' | t | customer_register_link }}
+        </li>
+        {% endif %}
+        {% endif %}
+        {% for link in linklists.footer.links %}
+        <li class="mobile-nav__item mobile-nav__item--secondary"><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+      <!-- //mobile-nav -->
+    </div>
+  </div>
+  <div id="CartDrawer" class="drawer drawer--right drawer--has-fixed-footer">
+    <div class="drawer__fixed-header">
+      <div class="drawer__header">
+        <div class="drawer__title">{{ 'cart.general.title' | t }}</div>
+        <div class="drawer__close">
+          <button type="button" class="icon-fallback-text drawer__close-button js-drawer-close">
+            <span class="icon icon-x" aria-hidden="true"></span>
+            <span class="fallback-text">{{ 'cart.general.close_cart' | t }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="drawer__inner">
+      <div id="CartContainer" class="drawer__cart"></div>
+    </div>
+  </div>
+
+  <div id="PageContainer" class="is-moved-by-drawer">
+
+    <div class="header-wrapper{% unless hero_full_height %} header-wrapper--over-hero{% endunless %}">
+      <header class="site-header" id="header" role="banner">
+        {% if settings.promotional_text_enable %}
+        <div class="header-top">{{ settings.promotional_text }}</div>
+        {% endif %}
+        <div class="wrappers">
+          <div class="grid--table header-top-section">
+            <div class="grid__item large--one-third large--text-right medium-down--hide">
+              <ul class="right-icons">
+
+                {% comment %}
+                Change search_modal to false if you'd prefer the search icon
+                to link to the search page.
+                {% endcomment %}
+
+                {% if settings.header_search_enable %}
+                {% assign search_modal = true %}
+                <!--                 <li class="site-nav__item">
+<a href="/search" class="site-nav__link site-nav__link--icon{% if search_modal %} js-toggle-search-modal{% endif %}" data-mfp-src="#SearchModal">
+<span class="icon-fallback-text">
+<span class="icon icon-search" aria-hidden="true"></span>
+<span class="fallback-text">{{ 'general.search.title' | t }}</span>
+</span>
+</a>
+</li> -->
+                <li class="site-nav__item search-box">
+                  <form action="/search" method="get" class="search-bar1 search" role="search">
+                    <input type="hidden" name="type" value="product">
+
+                    <input type="search" name="q" value="" placeholder="Search" aria-label="Search all products..." class="search-text">
+                    <input type="submit" value="" class="search-icon"/>
+
+                  </form>
+                </li>
+
+                {% endif %}                
+
+                <li class="site-nav__item">
+                  <a href="/cart" class="site-nav__link site-nav__link--icon cart-link js-drawer-open-right" aria-controls="CartDrawer">
+                    <span class="icon-fallback-text">
+                      <span class="icon icon-cart" aria-hidden="true"></span>
+                      <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
+                    </span>
+                    <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
+                  </a>
+                </li>
+                <li class="site-nav__item currency-box">{% include 'currency-picker' %}</li>
+
+                {% if shop.customer_accounts_enabled %}
+                <li class="site-nav__item site-nav__expanded-item">
+                  <a class="site-nav__link site-nav__link--icon" href="/account">
+                    <span class="icon-fallback-text">
+                      <span class="icon icon-customer" aria-hidden="true"></span>
+                      <span class="fallback-text">
+                        {% if customer %}
+                        {{ 'layout.customer.account' | t }}
+                        {% else %}
+                        {{ 'layout.customer.log_in' | t }}
+                        {% endif %}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+                {% endif %}                              
+
+              </ul>
+
+
+              <!-- //site-nav -->
+            </div>
+          </div>
+          <div class="grid--full grid--table header-bot-section">
+            <div class="grid__item large--hide one-quarter">
+              <div class="site-nav--mobile">
+                <button type="button" class="icon-fallback-text site-nav__link js-drawer-open-left" aria-controls="NavDrawer">
+                  <span class="icon icon-hamburger" aria-hidden="true"></span>
+                  <span class="fallback-text">{{ 'general.drawers.navigation' | t }}</span>
+                </button>
+              </div>
+            </div>
+            <div class="grid__item large--one-quarter medium-down--one-half">
+              {% comment %}
+              Use the uploaded logo from theme settings if enabled.
+              Site name gets precedence with H1 tag on homepage, div on other pages.
+              {% endcomment %}
+              {% if template == 'index' %}
+              <h1 class="site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+                {% else %}
+                <div class="h1 site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+                  {% endif %}
+                  {% if settings.logo_use_image %}
+                  {% comment %}
+                  .logo--has-inverted is only applied to the default logo if the inverted logo exists. That way it'll only be hidden on the slider when it has a backup.
+                  {% endcomment %}
+                  {% assign logo_inverted_url = 'logo-inverted.png' | asset_url %}
+                  <a href="/" itemprop="url" class="site-header__logo-link{% if settings.logo_use_inverted %} logo--has-inverted{% endif %}">
+                    <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+                  </a>
+                  {% if settings.logo_use_inverted %}
+                  <a href="/" itemprop="url" class="logo--inverted">
+                    <img src="{{ 'logo-inverted.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+                  </a>
+                  {% endif %}
+                  {% else %}
+                  <a href="/" itemprop="url">{{ shop.name }}</a>
+                  {% endif %}
+                  {% if template == 'index' %}
+                  </h1>
+                {% else %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="grid__item large--hide one-quarter">
+              <div class="site-nav--mobile text-right">
+                <a href="/cart" class="site-nav__link cart-link js-drawer-open-right" aria-controls="CartDrawer">
+                  <span class="icon-fallback-text">
+                    <span class="icon icon-cart" aria-hidden="true"></span>
+                    <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
+                  </span>
+                  <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
+                </a>
+
+              </div>
+            </div> 
+
+            <div class="grid__item large--two-thirds large--text-center medium-down--hide vertical-top header-nav-menu">
+              {% comment %}
+              List out your main-menu linklist (default)
+
+              More info on linklists:
+              - http://docs.shopify.com/themes/liquid-variables/linklists
+              {% endcomment %}
+              <!-- begin site-nav -->
+              <ul class="site-nav" id="AccessibleNav">
+                <li class="site-nav__item site-nav--compress__menu">
+                  <button type="button" class="icon-fallback-text site-nav__link site-nav__link--icon js-drawer-open-left" aria-controls="NavDrawer">
+                    <span class="icon icon-hamburger" aria-hidden="true"></span>
+                    <span class="fallback-text">{{ 'general.drawers.navigation' | t }}</span>
+                  </button>
+                </li>
+                {% for link in linklists[settings.header_menu].links %}
+                {% comment %}
+                Create a dropdown menu by naming a linklist the same as a link in the parent nav
+
+                More info on dropdowns:
+                - http://docs.shopify.com/manual/your-website/navigation/create-drop-down-menu
+                {% endcomment %}
+                {% assign child_list_handle = link.title | handleize %}
+                {% if linklists[child_list_handle].links != blank %}
+                <li class="site-nav__item site-nav__expanded-item site-nav--has-dropdown{% unless template == 'index' %}{% if link.active %} site-nav--active{% endif %}{% endunless%}{% if link.handle == "collections" and settings.nav_img_enable %} mega-menu--enabled{% endif %}" aria-haspopup="true">
+                  <a href="{{ link.url }}" class="site-nav__link">
+                    {{ link.title }}
+                    <!--                         <span class="icon icon-arrow-down" aria-hidden="true"></span> -->
+                  </a>
+                  <ul class="site-nav__dropdown text-left">
+                    <li>
+                      <ul class="nav-links">
+                        {% for childlink in linklists[child_list_handle].links %}
+                        <li{% if childlink.active %} class="site-nav--active"{% endif %}>
+                          <a href="{{ childlink.url }}" class="site-nav__dropdown-link">{{ childlink.title | escape }}</a>
+                        </li>
+                        {% endfor %}
+                      </ul>
+
+                      {% if link.handle == "collections" %}
+                      {% if settings.nav_img_enable %}                        
+                      <ul class="nav-img">
+                        <li><a href="{{ settings.col_1_link }}"><img src="{{ 'col-1.png' | asset_url }}" /></a></li>
+                        <li><a href="{{ settings.col_2_link }}"><img src="{{ 'col-2.png' | asset_url }}" /></a></li>
+                        <li><a href="{{ settings.col_3_link }}"><img src="{{ 'col-3.png' | asset_url }}" /></a></li>
+                      </ul>
+                      {% endif %}
+                      {% endif %}
+                    </li>
+                  </ul>
+                </li>
+                {% else %}
+                <li class="site-nav__item site-nav__expanded-item{% unless template == 'index' %}{% if link.active %} site-nav--active{% endif %}{% endunless%}">
+                  <a href="{{ link.url }}" class="site-nav__link">{{ link.title }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+              </ul>
+            </div>
+          </div>
+          {% comment %}
+          Remove comment tags below to add a search box to your header.
+          {% endcomment %}
+
+          {% comment %}
+          <div class="grid--full large--right medium-down--hide ">
+            {% include 'search-bar', search_btn_style: 'btn', search_bar_location: 'search-bar--header' %}
+          </div>
+          {% endcomment %}
+
+        </div>
+      </header>
+    </div>
+
+    <main class="main-content" role="main">
+      <div class="wrappers">
+        {{ content_for_layout }}
+      </div>
+    </main> 
+{%- include 'footer' -%}
+    
+
+  </div>
+
+{{ 'theme.js' | asset_url | script_tag }}
+  {{ 'simply.js' | asset_url | script_tag }}
+  
+
+  {% comment %}
+  Template-specific js
+  {% endcomment %}
+  <script>
+    {% if resetPassword %}
+    $(function() {
+      timber.resetPasswordSuccess();
+    });
+    {% endif %}
+  </script>
+
+  {% comment %}
+  Ajaxify your cart with this plugin.
+  Documentation:
+  - http://shopify.com/timber#ajax-cart
+  {% endcomment %}
+  {% if settings.cart_type == 'drawer' %}
+  {% include 'ajax-cart-template' %}
+  {{ 'ajax-cart.js' | asset_url | script_tag }}
+  <script>
+    jQuery(function($) {
+      ajaxCart.init({
+        formSelector: '#AddToCartForm',
+        cartContainer: '#CartContainer',
+        addToCartSelector: '#AddToCart',
+        enableQtySelectors: true,
+        moneyFormat: {{ shop.money_format | json }}
+      });
+      });
+  </script>
+  {% endif %}
+
+  {% if settings.header_search_enable and search_modal %}
+  <div id="SearchModal" class="mfp-hide">
+    {% include 'search-bar', search_btn_style: 'btn', search_bar_location: 'search-bar--modal' %}
+  </div>
+  {% endif %}
+
+
+  <script>
+    $(window).load(function(){
+      //       $("#header").sticky({ topSpacing: 0 });
+    });
+
+    searchbar();
+    function searchbar(){
+      $(document).on('mouseup touchstart',function (e) {
+        var container = $('form.search');
+        if (!container.is(e.target) // if the target of the click isn't the container...
+            && container.has(e.target).length === 0)
+        {
+          $('form.search input[type="submit"]').removeClass('active');
+          $('form.search .search-text').removeClass('active');
+        }
+      });
+      $('form.search input[type="submit"]').on('click',function(e){
+        e.preventDefault();
+        if($(this).hasClass('active')){
+          $(this).closest('form').submit();
+        }
+        else{
+          $(this).addClass('active');
+          $(this).siblings('.search-text').addClass('active');
+        }
+      });
+    }
+
+
+  </script>
+
+  {% include 'currencies' %}
+
+  <script>
+    $(document).ready(function(){
+      
+       if($('.white-space').length > 0){  $("body").addClass("black-text");  }
+   else {  $("body").removeClass("black-text");  }
+      
+      if($('.header-top').length == 0){  $("body").addClass("no_top-bar");  }
+   else {  $("body").removeClass("no_top-bar");  }
+      
+      $('.grid-uniform .grid-product').find(".productvariants").each(function(){
+        
+      var default_title = $(this).text().trim();
+      if( default_title == "Default Title" )
+      {
+        $(this).hide();
+      }
+        
+        
+      });
+     
+     
+
+      var iframes = $('.vimeovideo');
+
+      $(window).scroll(function () {
+        iframes.each(function() {
+          var player=$f(this);
+          player.api("pause");
+        });
+        return false;
+      });
+
+      $(".site-nav__dropdown ul.nav-links li").each(function(){
+
+        if($(this).hasClass("site-nav--active"))
+        {
+          $(this).parent('ul').parent().parent().parent().addClass('site-nav--active');
+        }
+      });
+
+      $("ul.mobile-nav__sublist li").each(function(){
+
+        if($(this).hasClass("mobile-nav__item--active"))
+        {
+          $(this).parent('ul').parent().addClass('mobile-nav__item--active');
+        }
+      });
+
+      /*--------------Update cart value--------*/
+
+      $("#AddToCart").click(function(){
+        var cart_vald = parseInt($(".site-nav__item .cart-link__bubble").text());
+        var cart_valm = parseInt($(".site-nav--mobile .cart-link__bubble").text());
+
+        var qty_val = parseInt($("#Quantity").val()); 
+
+        var totald = cart_vald + qty_val;
+        var totalm = cart_valm + qty_val;
+
+        $(".site-nav__item .cart-link__bubble").text(totald);
+        $(".site-nav--mobile .cart-link__bubble").text(totalm);
+
+      });
+    });
+
+    $(window).scroll(function(){
+      var scroll = $(window).scrollTop();   
+      if(scroll > 0){
+        $('.site-header').addClass('sticky-wrapper is-sticky');
+
+      }
+      else{
+        $('.site-header').removeClass('is-sticky');
+
+      }
+    });
+    var wh = jQuery(window).height();
+    var hh = jQuery('.header-wrapper').height();
+    var fh = jQuery('.site-footer').height();
+    jQuery('.main-content').css('min-height', wh - (hh + fh));
+    jQuery(window).resize(function() {
+        var wh = jQuery(window).height();
+        var hh = jQuery('.header-wrapper').height();
+        var fh = jQuery('.site-footer').height();
+        jQuery('.main-content').css('min-height', wh - (hh + fh));
+    });
+    
+    
+
+  </script>
+</body>
+</html>

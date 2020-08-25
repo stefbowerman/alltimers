@@ -1,0 +1,190 @@
+<div id='team_page'>
+  <div class="grid">
+    <div class="grid__item large--five-sixths push--large--one-twelfth">
+
+      <div class="grid">
+        <div class='grid__item large--one-quarter'>
+          <div class='names'>
+            {%- assign block_index = 0 -%}
+            {%- for block in section.blocks -%}
+            {%- assign active = false -%}
+            {%- if page.url == block.settings.page_url -%}
+            {%- assign active = true -%}
+            {%- assign block_index = forloop.index0 -%}
+            {%- endif -%}
+            <div class='single_name'>
+              {%- assign link = block.settings.page_url -%}
+              <a href='{{link}}' class="{% if active %}active{%- endif -%}">
+                {{block.settings.name}}
+              </a>
+            </div>
+            {%- endfor -%}
+          </div>
+        </div>
+        <div class="grid__item large--three-quarters">
+          <header class="section-header text-center">
+            <h1>{{ section.settings.header }}</h1>
+            <hr class="hr--small">
+          </header>
+          <div class='flexslider'>
+            <ul class='slides'>
+              {%- assign block = section.blocks[block_index] -%}
+              {%- for i in (1..6) -%}
+              {%- assign video = "video_" | append:i -%}
+              {%- assign image = "image_" | append:i -%}
+              {%- assign insta = "insta_" | append:i -%}
+              {%- assign text = "text_" | append:i -%}
+              {% if block.settings[image] != blank or block.settings[video] != blank %}
+              <li class='single_info'>
+                <div class='image'>
+                  {%- if block.settings[video] == blank -%}
+                  {% assign src_name = block.settings[image] %}
+                  {% assign src_alt = block.settings.image.alt %}
+                  {% include 'srcset' %}
+<!--                   <img src='{{block.settings[image] | img_url:'master'}}' alt='{{block.settings.image.alt}}'> -->
+                  {%- else -%}
+
+                  <iframe src='{{block.settings[video]}}'></iframe>
+                  {%- endif -%}
+                </div>
+                {%- unless block.settings.insta == blank -%}
+                <div class='isnta_block'>
+                  <a href='{{block.settings.insta}}' target='_blank'>
+                    <span class="icon icon-instagram" aria-hidden="true"></span>
+                  </a>
+                </div>
+                {%- endunless -%}   
+                {%- unless block.settings.text == blank -%}
+                <div class='text'>
+                  {{block.settings.text}}
+                </div>
+                {%- endunless -%}
+              </li>
+              {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{%- comment -%}
+<script>
+  {%- endcomment -%}
+  {% schema %}
+  {
+    "name": "Team page",
+      "settings":[
+        {
+          "type":"text",
+          "id":"header",
+          "label":"Header text",
+          "default":"TEAM MEMBERS"
+        }
+      ],
+        "blocks": [
+          {
+            "type": "image",
+            "name": "Member",
+            "settings":[
+              {
+                "type": "text",
+                "id": "name",
+                "label": "Name"
+              },
+              {
+                "type":"url",
+                "id":"page_url",
+                "label":"Page URL"
+              },
+              {
+                "type": "text",
+                "label": "Instagram link 1",
+                "id": "insta"
+              },
+              {
+                "type": "richtext",
+                "id": "text",
+                "label": "Description"
+              },
+              {
+                "type": "image_picker",
+                "id": "image_1",
+                "label": "Image 1"
+              },
+              {
+                "type":"text",
+                "id":"video_1",
+                "label":"Video URL 1",
+                "info":"Youtube embedded  url"
+              },
+              { 
+                "type": "image_picker",
+                "id": "image_2",
+                "label": "Image 2"
+              },
+              {
+                "type":"text",
+                "id":"video_2",
+                "label":"Video URL 2",
+                "info":"Youtube embedded  url"
+              },
+              { 
+                "type": "image_picker",
+                "id": "image_3",
+                "label": "Image 3"
+              },
+              {
+                "type":"text",
+                "id":"video_3",
+                "label":"Video URL 3",
+                "info":"Youtube embedded  url"
+              },
+
+              { 
+                "type": "image_picker",
+                "id": "image_4",
+                "label": "Image 4"
+              },
+              {
+                "type":"text",
+                "id":"video_4",
+                "label":"Video URL 4",
+                "info":"Youtube embedded  url"
+              },
+
+              { 
+                "type": "image_picker",
+                "id": "image_5",
+                "label": "Image 5"
+              },
+              {
+                "type":"text",
+                "id":"video_5",
+                "label":"Video URL 5",
+                "info":"Youtube embedded  url"
+              },
+              { 
+                "type": "image_picker",
+                "id": "image_6",
+                "label": "Image 6"
+              },
+              {
+                "type":"text",
+                "id":"video_6",
+                "label":"Video URL 6",
+                "info":"Youtube embedded  url"
+              }
+
+            ]
+          }
+        ]
+  }
+  {% endschema %}
+  {%- comment -%}
+</script>
+{%- endcomment -%}

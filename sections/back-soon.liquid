@@ -1,0 +1,42 @@
+<style>
+  .back-soon{
+    font-size:{{section.settings.font_size}}px;
+    color:{{section.settings.font_color}};
+  
+  }
+</style>
+
+<div>{{section.settings.header}}</div>
+
+{%- comment -%}
+<script>
+  {%- endcomment -%}
+  {% schema %}
+  {
+      "name": "Team page",
+      "class": "back-soon",
+      "settings":[
+        {
+          "type":"text",
+          "id":"header",
+          "label":" Text"          
+        },
+        {
+				"type":"number",
+				"id":"font_size",
+				"label":"font-size",
+				"default":50
+		},
+		{
+				"type":"color",
+				"id":"font_color",
+				"label":"Font color",
+				"default":"#000"
+	    }
+      ]
+    
+  }
+  {% endschema %}
+  {%- comment -%}
+</script>
+{%- endcomment -%}

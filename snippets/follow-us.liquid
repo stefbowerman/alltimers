@@ -1,0 +1,48 @@
+{% if section_number > 1 and number_of_index_sections > 1 %}
+<hr class="hr--medium hr--clear">
+{% endif %}
+<div class="section-header text-center follow-us">
+  <h2 class="h3 section-header__title">{{ settings.follow_us_header }}</h2>
+</div>
+
+<div class="grid follow-us-wrap">
+
+  {% capture social_icon %}social-img{{ i }}.png{% endcapture %}
+  {% capture social_link %}social{{ i }}_link{% endcapture %}
+  {% capture social_title %}social{{ i }}_title{% endcapture %}
+  <div class="grid__item one-whole text-center">
+    {% comment %}
+    <a href="{{ settings[social_link] }}" target="_blank">
+      <img src="{{ social_icon | asset_url }}" />
+      <span class="social-title">{{ settings[social_title] }}</span>
+    </a>
+    {% endcomment %}
+    <ul class="grid no-bullets social-icons inline-list">
+    {% if settings.social_twitter_link != blank %}
+    <li class="grid__item small--one-third medium--one-third large--one-third">
+      <a href="{{ settings.social_twitter_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Twitter' }}">
+        <span class="icon icon-twitter" aria-hidden="true"></span>
+        <span class="social-title">Twitter</span>
+      </a>
+    </li>
+    {% endif %}
+    {% if settings.social_facebook_link != blank %}
+    <li class="grid__item small--one-third medium--one-third large--one-third">
+      <a href="{{ settings.social_facebook_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Facebook' }}">
+        <span class="icon icon-facebook" aria-hidden="true"></span>
+        <span class="social-title">Facebook</span>
+      </a>
+    </li>
+    {% endif %}
+    {% if settings.social_instagram_link != blank %}
+    <li class="grid__item small--one-third medium--one-third large--one-third">
+      <a href="{{ settings.social_instagram_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Instagram' }}">
+        <span class="icon icon-instagram" aria-hidden="true"></span>
+        <span class="social-title">Instagram</span>
+      </a>
+    </li>
+    {% endif %}
+    </ul>
+  </div>
+
+</div>
