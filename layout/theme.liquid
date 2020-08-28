@@ -87,7 +87,9 @@ Add the page template as a class for easy page or template specific styling.
       </div>
     </div>
     <div class="drawer__inner">
+      {% comment %}
       <div class="currency-picker-mobile">{% include 'currency-picker' %}</div>
+      {% endcomment %}
       {% comment %}
       Remove comment tags below to add a search box at the top of your pull-out menu.
       {% endcomment %}
@@ -192,17 +194,15 @@ Add the page template as a class for easy page or template specific styling.
     <div class="header-wrapper{% unless hero_full_height %} header-wrapper--over-hero{% endunless %}">
       <header class="site-header" id="header" role="banner">
         {% if settings.promotional_text_enable %}
-        <div class="header-top" style="padding-left: 0; padding-right: 0;">
-          <div class="wrapper" style="max-width: none; display:flex; align-items: center; justify-content: space-between;">
-            <div style="flex: 1; text-align: left">C:\Users\AllTimers></div>
-            <div style="flex: 1; text-align: center">{{ settings.promotional_text }}</div>
-            <div style="flex: 1; text-align: right">Mon Aug 10 2020 10:55:52 GMT-0700</div>
+        <div class="header-top">
+          <div class="wrapper">
+            <div class="header-top__block header-top__block--terminal sm-hide" style="text-align: left">C:\Users\AllTimers></div>
+            <div class="header-top__block">{{ settings.promotional_text }}</div>
+            <div class="header-top__block sm-hide" style="text-align: right" data-hack-time></div>
           </div>
         </div>
         {% endif %}
         <div class="wrapper">
-          <img src="{{ 'skull.gif' | asset_url }}" style="width: 200px; position: absolute; left: 0;" />
-          <img src="{{ 'skull.gif' | asset_url }}" style="width: 200px; position: absolute; right: 0;" />
           <div class="grid--table header-top-section">
             <div class="grid__item large--one-third large--text-right medium-down--hide">
               <ul class="right-icons">
@@ -243,7 +243,9 @@ Add the page template as a class for easy page or template specific styling.
                     <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
                   </a>
                 </li>
+                {% comment %}
                 <li class="site-nav__item currency-box">{% include 'currency-picker' %}</li>
+                {% endcomment %}
 
                 {% if shop.customer_accounts_enabled %}
                 <li class="site-nav__item site-nav__expanded-item">
@@ -319,7 +321,9 @@ Add the page template as a class for easy page or template specific styling.
               {% endcomment %}
               <!-- begin site-nav -->
 
-              <img src="{{ 'hacked-logo.jpg' | asset_img_url: '600x' }}" style="" />
+              <a href="{{ shop.url }}">
+                <img src="{{ 'hacked-logo.png' | asset_img_url: '800x' }}" style="max-width: 450px;" alt="{{ shop.name | escape }}"/>
+              </a>
 
               <ul class="site-nav" id="AccessibleNav" style="display: none;">
                 <li class="site-nav__item site-nav--compress__menu">
@@ -401,6 +405,8 @@ Add the page template as a class for easy page or template specific styling.
       </header>
     </div>
 
+    <img src="{{ 'skull.gif' | asset_url }}" class="skull skull--left" />
+    <img src="{{ 'skull.gif' | asset_url }}" class="skull skull--right" />
 
     <div class="matrix-bg">
       <img src="{{ 'matrix.jpg' | asset_img_url: '1200x' }}" />

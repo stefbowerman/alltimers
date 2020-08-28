@@ -78,13 +78,13 @@ Example
                   <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
                   {% endif %}
                   {% if product.price_varies %}
-                  {{ product.price_min | money }}
+                  {{ product.price_min | money_without_currency }} {{ shop.currency }}
                   <span class="icon-fallback-text">
                     <span class="icon icon-plus grid-product__price-min" aria-hidden="true"></span>
                     <span class="fallback-text">+</span>
                   </span>
                   {% else %}
-                  {{ product.price | money }}
+                  {{ product.price | money_without_currency }} {{ shop.currency }}
                   {% endif %}
                 </span>
               </div>

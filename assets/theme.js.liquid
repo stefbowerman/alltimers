@@ -317,11 +317,11 @@ if (variant.featured_image) {
       $quantityElements.hide();
     }
 
-    $productPrice.html(Shopify.formatMoney(variant.price, moneyFormat).replace(/((\,00)|(\.00))$/g, '')).show();
+    $productPrice.html(Shopify.formatMoney(variant.price, moneyFormat)).show();
 
     // Also update and show the product's compare price if necessary
     if (variant.compare_at_price > variant.price) {
-      $comparePrice.html(Shopify.formatMoney(variant.compare_at_price, moneyFormat).replace(/((\,00)|(\.00))$/g, ''));
+      $comparePrice.html(Shopify.formatMoney(variant.compare_at_price, moneyFormat));
       $priceWrapper.show();
       $productPrice.addClass('on-sale');
       $comparePriceA11y.attr('aria-hidden', 'false');
@@ -1008,6 +1008,7 @@ theme.init = function () {
   theme.hideSingleSelectors();
   theme.styleTextLinks();
   theme.searchModal();
+  theme.headerHack();
 
   {% if settings.product_zoom_enable %}
     theme.productImageZoom();
@@ -1107,6 +1108,21 @@ theme.fitNav = function () {
     theme.cache.$siteNav.addClass('site-nav--init');
   }
 };
+
+theme.headerHack = function() {
+  var $hackTime = $('[data-hack-time]').first();
+
+  if ($hackTime.length === 0) return;
+
+  var setTime = function() {
+    var d = new Date();
+    // var text = [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
+    var text = d.toISOString();
+    $hackTime.text(text);
+  };
+
+  setInterval(setTime, 250);
+}
 
 theme.initHero = function () {
   if (!theme.cache.$hero.length) {
