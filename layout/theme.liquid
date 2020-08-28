@@ -39,7 +39,7 @@
   {{ 'themenew.scss.css' | asset_url | stylesheet_tag }}
   {{ 'flexslider.css' | asset_url | stylesheet_tag }}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
-  {% include 'google-fonts' %}
+  {% comment %}{% include 'google-fonts' %}{% endcomment %}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css">
 
   <!-- Header hook for plugins ================================================== -->
@@ -192,9 +192,17 @@ Add the page template as a class for easy page or template specific styling.
     <div class="header-wrapper{% unless hero_full_height %} header-wrapper--over-hero{% endunless %}">
       <header class="site-header" id="header" role="banner">
         {% if settings.promotional_text_enable %}
-        <div class="header-top">{{ settings.promotional_text }}</div>
+        <div class="header-top" style="padding-left: 0; padding-right: 0;">
+          <div class="wrapper" style="max-width: none; display:flex; align-items: center; justify-content: space-between;">
+            <div style="flex: 1; text-align: left">C:\Users\AllTimers></div>
+            <div style="flex: 1; text-align: center">{{ settings.promotional_text }}</div>
+            <div style="flex: 1; text-align: right">Mon Aug 10 2020 10:55:52 GMT-0700</div>
+          </div>
+        </div>
         {% endif %}
         <div class="wrapper">
+          <img src="{{ 'skull.gif' | asset_url }}" style="width: 200px; position: absolute; left: 0;" />
+          <img src="{{ 'skull.gif' | asset_url }}" style="width: 200px; position: absolute; right: 0;" />
           <div class="grid--table header-top-section">
             <div class="grid__item large--one-third large--text-right medium-down--hide">
               <ul class="right-icons">
@@ -269,7 +277,7 @@ Add the page template as a class for easy page or template specific styling.
                 </button>
               </div> 
             </div>
-            <div class="grid__item large--one-quarter medium-down--one-half">
+            <div class="grid__item large--one-quarter medium-down--one-half" style="display: none;">
               {% comment %}
               Use the uploaded logo from theme settings if enabled.
               Site name gets precedence with H1 tag on homepage, div on other pages.
@@ -302,20 +310,7 @@ Add the page template as a class for easy page or template specific styling.
               {% endif %}
             </div>
 
-            <div class="grid__item large--hide one-quarter">
-              <div class="site-nav--mobile text-right">
-                <a href="/cart" class="site-nav__link cart-link js-drawer-open-right" aria-controls="CartDrawer">
-                  <span class="icon-fallback-text">
-                    <span class="icon icon-cart" aria-hidden="true"></span>
-                    <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
-                  </span>
-                  <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
-                </a>
-
-              </div>
-            </div> 
-
-            <div class="grid__item large--two-thirds large--text-center medium-down--hide vertical-top header-nav-menu">
+            <div class="grid__item large--two-thirds large--text-center medium-down--hide vertical-top header-nav-menu" style="width: 100%;">
               {% comment %}
               List out your main-menu linklist (default)
 
@@ -323,7 +318,10 @@ Add the page template as a class for easy page or template specific styling.
               - http://docs.shopify.com/themes/liquid-variables/linklists
               {% endcomment %}
               <!-- begin site-nav -->
-              <ul class="site-nav" id="AccessibleNav">
+
+              <img src="{{ 'hacked-logo.jpg' | asset_img_url: '600x' }}" style="" />
+
+              <ul class="site-nav" id="AccessibleNav" style="display: none;">
                 <li class="site-nav__item site-nav--compress__menu">
                   <button type="button" class="icon-fallback-text site-nav__link site-nav__link--icon js-drawer-open-left" aria-controls="NavDrawer">
                     <span class="icon icon-hamburger" aria-hidden="true"></span>
@@ -375,6 +373,19 @@ Add the page template as a class for easy page or template specific styling.
 
               </ul>
             </div>
+
+            <div class="grid__item large--hide one-quarter">
+              <div class="site-nav--mobile text-right">
+                <a href="/cart" class="site-nav__link cart-link js-drawer-open-right" aria-controls="CartDrawer">
+                  <span class="icon-fallback-text">
+                    <span class="icon icon-cart" aria-hidden="true"></span>
+                    <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
+                  </span>
+                  <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
+                </a>
+
+              </div>
+            </div>             
           </div>
           {% comment %}
           Remove comment tags below to add a search box to your header.
@@ -390,12 +401,26 @@ Add the page template as a class for easy page or template specific styling.
       </header>
     </div>
 
+
+    <div class="matrix-bg">
+      <img src="{{ 'matrix.jpg' | asset_img_url: '1200x' }}" />
+    </div>
+
+    <div class="sale-banner">
+      <div class="sale-marquee">
+        {% for i in (1..25) %}
+          <span {% if i > 10 %}class="medium-down--hide"{% endif %}>Sale</span>
+        {% endfor %}
+      </div>
+    </div>  
+
     <main class="main-content" role="main">
       <div class="wrapper">
         {{ content_for_layout }}
       </div>
     </main> 
-{%- include 'footer' -%}
+    
+    {%- include 'footer' -%}
     
 
   </div>

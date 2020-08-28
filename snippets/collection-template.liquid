@@ -125,10 +125,10 @@ Collection template, used on collection.liquid and collection.image.liquid
 
 {% elsif settings.collection_products_grid == 'grid' %}
 <div class='grid-uniform'>
-  <div class='grid__item  large--one-eighth medium--one-sixth small--one-whole'>
+  <div class='grid__item  large--one-quarter medium--one-sixth small--one-whole'>
     {%- section 'collection-sidebar' -%}
   </div>
-  <div class="grid__item large--seven-eighths medium--five-sixths small--one-whole">
+  <div class="grid__item large--three-quarters medium--five-sixths small--one-whole">
     <div class="grid-uniform">
       {% if settings.collection_products_per_row == '3' %}
       {% assign grid_item_width = 'small--one-half medium--one-quarter large--one-third' %}
