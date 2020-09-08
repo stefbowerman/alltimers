@@ -54,22 +54,6 @@ Example
           <span class="grid-product__price-wrap">
             <!--         <span class="long-dash">—</span> -->
             <div class="hoverprice">
-              {% if product.variants.size > 1 and product.available %}
-              <div class="productvariantsdiv">
-                {% assign var_soldOut = true %}
-                {% for variant in product.variants %}
-                {% if variant.available %}
-                <span class="productvariants">{{ variant.title }}</span>           
-                {% assign var_soldOut = false %}
-                {% endif %}           
-                {% endfor %}
-
-                {% if var_soldOut %}
-                <span class="productvariants">SOLD OUT</span>
-                {% endif %}
-              </div>
-              {% endif %}
-
               <div class="productprice">
                 <span class="grid-product__price">
                   {% if on_sale %}
@@ -78,16 +62,28 @@ Example
                   <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
                   {% endif %}
                   {% if product.price_varies %}
-                  {{ product.price_min | money_without_currency }} {{ shop.currency }}
+                  {{ product.price_min | money_without_currency }}{{ shop.currency }}
                   <span class="icon-fallback-text">
                     <span class="icon icon-plus grid-product__price-min" aria-hidden="true"></span>
                     <span class="fallback-text">+</span>
                   </span>
                   {% else %}
-                  {{ product.price | money_without_currency }} {{ shop.currency }}
+                  {{ product.price | money_without_currency }}{{ shop.currency }}
                   {% endif %}
                 </span>
               </div>
+
+              {% if product.available %}
+                {% unless product.has_only_default_variant %}
+                  <div class="productvariantsdiv">
+                    {% for variant in product.variants %}
+                      {% if variant.available %}
+                        <span class="productvariants">{{ variant.title }}</span>           
+                      {% endif %}           
+                    {% endfor %}
+                  </div>
+                {% endunless %}
+              {% endif %}              
             </div>
           </span>
 

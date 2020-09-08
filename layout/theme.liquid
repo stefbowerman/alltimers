@@ -76,17 +76,7 @@ Add the page template as a class for easy page or template specific styling.
 <body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}">
 
   <div id="NavDrawer" class="drawer drawer--left">
-    <div class="drawer__fixed-header">
-      <div class="drawer__header">
-        <div class="drawer__close drawer__close--left">
-          <button type="button" class="icon-fallback-text drawer__close-button js-drawer-close">
-            <span class="icon icon-x" aria-hidden="true"></span>
-            <span class="fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="drawer__inner">
+    <div class="drawer__inner" style="top: 20px;">
       {% comment %}
       <div class="currency-picker-mobile">{% include 'currency-picker' %}</div>
       {% endcomment %}
@@ -97,6 +87,8 @@ Add the page template as a class for easy page or template specific styling.
       {% comment %}
       {% include 'search-bar', search_btn_style: 'btn--secondary', search_bar_location: 'search-bar--drawer' %}
       {% endcomment %}
+
+      <p style="font-size: 12px; line-height: 1.23;">> please select an option before continuing</p>
 
       <!-- begin mobile-nav -->
       <ul class="mobile-nav">
@@ -111,7 +103,9 @@ Add the page template as a class for easy page or template specific styling.
         {% if linklists[child_list_handle].links != blank %}
         <li class="mobile-nav__item{% unless template == 'index' %}{% if link.active %} mobile-nav__item--active{% endif %}{% endunless %}">
           <div class="mobile-nav__has-sublist">
-            <a href="{{ link.url }}" class="mobile-nav__link" id="Label-{{ child_list_handle }}">{{ link.title }}</a>
+            <a href="{{ link.url }}" class="mobile-nav__link" id="Label-{{ child_list_handle }}">
+              {% if link.active %}>_ {% endif %}{{ link.title }}
+            </a>
             <div class="mobile-nav__toggle">
               <button type="button" class="mobile-nav__toggle-btn icon-fallback-text" data-aria-controls="Linklist-{{ child_list_handle }}">
                 <span class="icon-fallback-text mobile-nav__toggle-open">
@@ -135,7 +129,9 @@ Add the page template as a class for easy page or template specific styling.
         </li>
         {% else %}
         <li class="mobile-nav__item{% unless template == 'index' %}{% if link.active %} mobile-nav__item--active{% endif %}{% endunless %}">
-          <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+          <a href="{{ link.url }}" class="mobile-nav__link">
+            {% if link.active %}> {% endif %}{{ link.title }}
+          </a>
         </li>
         {% endif %}
         {% endfor %}
@@ -170,6 +166,12 @@ Add the page template as a class for easy page or template specific styling.
         {% endfor %}
       </ul>
       <!-- //mobile-nav -->
+
+      <div class="drawer__close drawer__close--left" style="margin-top: 20px; display: block; width: 100%;">
+        <button type="button" class="drawer__close-button js-drawer-close">
+          CLOSE MENU
+        </button>
+      </div>      
     </div>
   </div>
   <div id="CartDrawer" class="drawer drawer--right drawer--has-fixed-footer">
@@ -189,20 +191,21 @@ Add the page template as a class for easy page or template specific styling.
     </div>
   </div>
 
+  {% if settings.promotional_text_enable %}
+  <div class="header-top is-moved-by-drawer">
+    <div class="wrapper">
+      <div class="header-top__block header-top__block--terminal sm-hide" style="text-align: left" onclick="alert('☠️ ACCESS DENIED ☠️')">C:\Users\AllTimers></div>
+      <div class="header-top__block">{{ settings.promotional_text }}</div>
+      <div class="header-top__block sm-hide" style="text-align: right" data-hack-time></div>
+    </div>
+  </div>
+  {% endif %}  
+
   <div id="PageContainer" class="is-moved-by-drawer">
 
     <div class="header-wrapper{% unless hero_full_height %} header-wrapper--over-hero{% endunless %}">
       <header class="site-header" id="header" role="banner">
-        {% if settings.promotional_text_enable %}
-        <div class="header-top">
-          <div class="wrapper">
-            <div class="header-top__block header-top__block--terminal sm-hide" style="text-align: left">C:\Users\AllTimers></div>
-            <div class="header-top__block">{{ settings.promotional_text }}</div>
-            <div class="header-top__block sm-hide" style="text-align: right" data-hack-time></div>
-          </div>
-        </div>
-        {% endif %}
-        <div class="wrapper">
+        <div class="wrapper" style="max-width: none">
           <div class="grid--table header-top-section">
             <div class="grid__item large--one-third large--text-right medium-down--hide">
               <ul class="right-icons">
@@ -222,24 +225,23 @@ Add the page template as a class for easy page or template specific styling.
 </span>
 </a>
 </li> -->
-                <li class="site-nav__item search-box">
-                  <form action="/search" method="get" class="search-bar1 search" role="search">
-                    <input type="hidden" name="type" value="product">
-
-                    <input type="search" name="q" value="" placeholder="Search" aria-label="Search all products..." class="search-text">
-                    <input type="submit" value="" class="search-icon"/>
-
-                  </form>
+                <li class="site-nav__item">
+                  <a href="/search" class="site-nav__link">
+                    Run Query
+                  </a>
                 </li>
 
                 {% endif %}                
 
                 <li class="site-nav__item">
-                  <a href="/cart" class="site-nav__link site-nav__link--icon cart-link js-drawer-open-right" aria-controls="CartDrawer">
+                  <a href="/cart" class="site-nav__link cart-link js-drawer-open-right" aria-controls="CartDrawer">
+                    {{ 'layout.cart.title' | t }}
+                    <!-- 
                     <span class="icon-fallback-text">
                       <span class="icon icon-cart" aria-hidden="true"></span>
                       <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
                     </span>
+                  -->
                     <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
                   </a>
                 </li>
@@ -249,7 +251,13 @@ Add the page template as a class for easy page or template specific styling.
 
                 {% if shop.customer_accounts_enabled %}
                 <li class="site-nav__item site-nav__expanded-item">
-                  <a class="site-nav__link site-nav__link--icon" href="/account">
+                  <a class="site-nav__link" href="/account">
+                    {% if customer %}
+                     {{ 'layout.customer.account' | t }}
+                    {% else %}
+                      {{ 'layout.customer.log_in' | t }}
+                    {% endif %}
+                    <!--
                     <span class="icon-fallback-text">
                       <span class="icon icon-customer" aria-hidden="true"></span>
                       <span class="fallback-text">
@@ -260,6 +268,7 @@ Add the page template as a class for easy page or template specific styling.
                         {% endif %}
                       </span>
                     </span>
+                      -->
                   </a>
                 </li>
                 {% endif %}                              
@@ -271,12 +280,11 @@ Add the page template as a class for easy page or template specific styling.
             </div>
           </div>
           <div class="grid--full grid--table header-bot-section">
-            <div class="grid__item large--hide one-quarter">
+            <div class="grid__item large--hide one-quarter medium--one-sixth">
               <div class="site-nav--mobile">
-                <button type="button" class="icon-fallback-text site-nav__link js-drawer-open-left" aria-controls="NavDrawer">
-                  <span class="icon icon-hamburger" aria-hidden="true"></span>
-                  <span class="fallback-text">{{ 'general.drawers.navigation' | t }}</span>
-                </button>
+                <a href="#" class="site-nav__link js-drawer-open-left" aria-controls="NavDrawer">
+                  MENU
+                </a>
               </div> 
             </div>
             <div class="grid__item large--one-quarter medium-down--one-half" style="display: none;">
@@ -312,7 +320,7 @@ Add the page template as a class for easy page or template specific styling.
               {% endif %}
             </div>
 
-            <div class="grid__item large--two-thirds large--text-center medium-down--hide vertical-top header-nav-menu" style="width: 100%;">
+            <div class="grid__item large--two-thirds large--text-center vertical-top header-nav-menu" style="width: 100%;">
               {% comment %}
               List out your main-menu linklist (default)
 
@@ -322,7 +330,7 @@ Add the page template as a class for easy page or template specific styling.
               <!-- begin site-nav -->
 
               <a href="{{ shop.url }}">
-                <img src="{{ 'hacked-logo.png' | asset_img_url: '800x' }}" style="max-width: 450px;" alt="{{ shop.name | escape }}"/>
+                <img src="{{ 'hacked-logo.png' | asset_img_url: '800x' }}" class="hacked-logo" alt="{{ shop.name | escape }}"/>
               </a>
 
               <ul class="site-nav" id="AccessibleNav" style="display: none;">
@@ -378,16 +386,18 @@ Add the page template as a class for easy page or template specific styling.
               </ul>
             </div>
 
-            <div class="grid__item large--hide one-quarter">
+            <div class="grid__item large--hide one-quarter medium--one-sixth">
               <div class="site-nav--mobile text-right">
                 <a href="/cart" class="site-nav__link cart-link js-drawer-open-right" aria-controls="CartDrawer">
+                  {{ 'layout.cart.title' | t | upcase }}
+                  <!-- 
                   <span class="icon-fallback-text">
                     <span class="icon icon-cart" aria-hidden="true"></span>
                     <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
                   </span>
+                -->
                   <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
-                </a>
-
+                </a>                
               </div>
             </div>             
           </div>
@@ -414,8 +424,12 @@ Add the page template as a class for easy page or template specific styling.
 
     <div class="sale-banner">
       <div class="sale-marquee">
-        {% for i in (1..25) %}
-          <span {% if i > 10 %}class="medium-down--hide"{% endif %}>Sale</span>
+        {% assign max = 20 %}
+        {% assign cutoff = 7 %}
+        {% assign text = 'Sale' %}
+
+        {% for i in (1..max) %}
+          <span {% if i > cutoff %}class="medium-down--hide"{% endif %}>{{ text }}</span>
         {% endfor %}
       </div>
     </div>  
@@ -523,14 +537,16 @@ Add the page template as a class for easy page or template specific styling.
 
   </script>
 
+  {% comment %}
   {% include 'currencies' %}
+  {% endcomment %}
 
   <script>
     $(document).ready(function(){
       
       if(window.outerWidth <= 667) {
         $(".collection_sidebar .title").click(function(){
-          $("ul.list").slideToggle('slow');
+          $("ul.list").slideToggle('fast');
           $(".title .icon").toggleClass('icon-plus', 3000).toggleClass('icon-minus', 3000);
         });
       }

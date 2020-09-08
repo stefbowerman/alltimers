@@ -1,15 +1,15 @@
+{% if settings.enable_shop %}
+  {% layout none %}
+  <script> 
+    window.location = "/collections/all-products"; 
+  </script>
+  {% break %}
+{% endif %}
+
 {% layout 'theme.index' %}
+
 <!-- /templates/index.liquid -->
 {%- section 'index-layout' -%}
- {% if settings.enable_shop %}
-  <style>
-    #shopify-section-index-layout{display:none;}
-  </style>
-<script> 
-	window.location.href= "/collections/all-products"; 
-
-</script>
-{% endif %}
 {{ content_for_index }}
 
 

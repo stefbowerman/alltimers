@@ -131,7 +131,7 @@ Collection template, used on collection.liquid and collection.image.liquid
   <div class="grid__item large--three-quarters medium--five-sixths small--one-whole">
     <div class="grid-uniform">
       {% if settings.collection_products_per_row == '3' %}
-      {% assign grid_item_width = 'small--one-half medium--one-quarter large--one-third' %}
+      {% assign grid_item_width = 'small--one-half medium--one-third large--one-third' %}
       {% elsif  settings.collection_products_per_row == '4' %}
       {% assign grid_item_width = 'small--one-half medium--one-quarter large--one-quarter' %}
       {% elsif settings.collection_products_per_row == '5' %}
@@ -140,7 +140,7 @@ Collection template, used on collection.liquid and collection.image.liquid
       {% assign grid_item_width = 'small--one-half medium--one-quarter large--one-sixth' %}
       {% endif %}
 
-      {% paginate collection.products by 15 %}
+      {% paginate collection.products by 30 %}
           
       <div id="AjaxinateLoop" class="AjaxinateLoop">
       {% for product in collection.products %}

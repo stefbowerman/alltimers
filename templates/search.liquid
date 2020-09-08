@@ -21,20 +21,23 @@
 
   <div class="grid">
     <div class="grid__item">
-      <header class="section-header text-center">
-        {% if search.performed %}
+      {% unless search.performed %}
+        <header class="section-header text-center">
+          <h1 class="text-center">Database Query</h1>
+        </header>
+      {% endunless %}
+
+      {% include 'search-bar', search_btn_style: 'btn', search_bar_location: 'search-bar--page' %}      
+
+      {% if search.performed %}
+        <header class="section-header text-center" style="margin-top: 40px;">
           {% if search.results_count == 0 %}
             <h1 class="text-center">{{ 'general.search.no_results_html' | t: terms: search.terms }}</h1>
           {% else %}
             <h1 class="text-center">{{ 'general.search.results_for_html' | t: terms: search.terms }}</h1>
           {% endif %}
-        {% else %}
-          <h1 class="text-center">{{ 'general.search.title' | t }}</h1>
-        {% endif %}
-        <hr class="hr--small">
-      </header>
-
-      {% include 'search-bar', search_btn_style: 'btn', search_bar_location: 'search-bar--page' %}
+        </header>
+      {% endif %}
 
       {% if search.performed %}
 

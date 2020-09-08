@@ -150,6 +150,8 @@ timber.init = function () {
   timber.responsiveVideos();
   timber.loginForms();
   timber.setSelectorLabels();
+
+  $(document.body).addClass('is-loaded');
 };
 
 timber.accessibleNav = function () {
@@ -1110,7 +1112,34 @@ theme.fitNav = function () {
 };
 
 theme.headerHack = function() {
+  var $hackedLogo = $('.hacked-logo').first();
   var $hackTime = $('[data-hack-time]').first();
+
+  var strobeLogo = function() {
+    var min1 = 1;
+    var max1 = 10;
+    
+    var min2 = 1;
+    var max2 = 3;
+
+    var rand1 = Math.floor(Math.random() * (max1 - min1 + 1) + min1);
+    var rand2 = Math.floor(Math.random() * (max2 - min2 + 1) + min2);
+
+    setTimeout(function() {
+      $hackedLogo.addClass('strobing');
+
+      setTimeout(function() {
+        $hackedLogo.removeClass('strobing');
+        strobeLogo();
+      }, rand2*100);
+    }, rand1 * 100);
+  };
+
+  setTimeout(strobeLogo, 1000);
+
+  $('.skull').on('click', function() {
+    alert('⚠️ ....WARNING.... ⚠️\n\nAlltimers Group LLC has not authorized usage of this website function.\nYour I.P. address has been logged for further review.');
+  });
 
   if ($hackTime.length === 0) return;
 
@@ -1118,10 +1147,16 @@ theme.headerHack = function() {
     var d = new Date();
     // var text = [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
     var text = d.toISOString();
-    $hackTime.text(text);
+
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame($hackTime.text.bind($hackTime, text));
+    }
+    else {
+      $hackTime.text(text);
+    }
   };
 
-  setInterval(setTime, 250);
+  setInterval(setTime, 180);
 }
 
 theme.initHero = function () {

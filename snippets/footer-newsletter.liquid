@@ -1,7 +1,7 @@
 {% if settings.newsletter_form_action != blank %}
 {% assign form_action = settings.newsletter_form_action %}
 <form action="{{ form_action }}" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank">
- <label for="Email" class="newsletter__label">Subscribe to our newsletter</label>
+ <label for="Email" class="newsletter__label">Subscribe</label>
  <div class="newsletter--form">
   <div class="input-group">
    <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" name="EMAIL" id="Email" class="input-group-field newsletter__input" autocorrect="off" autocapitalize="off">
@@ -24,7 +24,7 @@
  <div class="note form-success">{{ 'general.newsletter_form.newsletter_confirmation' | t }}</div>
 </div>
 {% else %}
-<label for="Email" class="newsletter__label">Subscribe to our newsletter</label>
+<label for="Email" class="newsletter__label">Subscribe</label>
 <input type="hidden" name="contact[tags]" value="newsletter">
 <div class="newsletter--form">
  <div class="input-group">

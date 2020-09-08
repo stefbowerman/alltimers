@@ -127,14 +127,14 @@
    {% if settings.social_instagram_link != blank %}
   <li>
     <a href="{{ settings.social_instagram_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Instagram' }}">
-      <span class="icon icon-instagram" aria-hidden="true"></span>
+      {Instagram}
     </a>
   </li>
   {% endif %}
    {% if settings.social_mail_link != blank %}
   <li>
     <a href="mailto:{{ settings.social_mail_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Mail' }}">
-      <span class="fa fa-envelope-o" aria-hidden="true"></span>
+      {Email Us}
     </a>
   </li>
   {% endif %}
@@ -209,7 +209,7 @@
     </div>
     <div class='col col-3'>
       <p class='text-right'>
-        {{ shop.name }} &copy; {{ 'now' | date: '%Y' }}
+        {{ shop.name | upcase }} LLC. COPYRIGHT {{ 'now' | date: '%Y' }}
       </p>
     </div>
   </div>
