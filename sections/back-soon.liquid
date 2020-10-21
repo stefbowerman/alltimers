@@ -1,40 +1,56 @@
 <style>
   .back-soon{
-    font-size:{{section.settings.font_size}}px;
-    color:{{section.settings.font_color}};
-  
+    font-size: {{section.settings.font_size | append: 'px' }};
+    color: {{section.settings.font_color}};
+  }
+
+  .back-soon-img {
+    margin: 0 auto;
+    padding: 100px 20px 0;
+    max-width: 800px;
+    text-align: center;
   }
 </style>
 
 <div>{{section.settings.header}}</div>
+
+{% if section.settings.image %}
+  <div class="back-soon-img">
+    <img src="{{ section.settings.image | img_url: '1200x' }}" />
+  </div>
+{% endif %}
 
 {%- comment -%}
 <script>
   {%- endcomment -%}
   {% schema %}
   {
-      "name": "Team page",
-      "class": "back-soon",
-      "settings":[
-        {
-          "type":"text",
-          "id":"header",
-          "label":" Text"          
-        },
-        {
+    "name": "Team page",
+    "class": "back-soon",
+    "settings":[
+      {
+        "type":"text",
+        "id":"header",
+        "label":" Text"          
+      },
+      {
 				"type":"number",
 				"id":"font_size",
 				"label":"font-size",
 				"default":50
-		},
-		{
+	    },
+	    {
 				"type":"color",
 				"id":"font_color",
 				"label":"Font color",
 				"default":"#000"
-	    }
-      ]
-    
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      }
+    ]
   }
   {% endschema %}
   {%- comment -%}

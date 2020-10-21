@@ -36,7 +36,6 @@
   <!-- CSS ================================================== -->
   {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
   {{ 'theme.scss.css' | asset_url | stylesheet_tag }}
-  {{ 'themenew.scss.css' | asset_url | stylesheet_tag }}
   {{ 'flexslider.css' | asset_url | stylesheet_tag }}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
   {% include 'google-fonts' %}
@@ -46,8 +45,9 @@
   {{ content_for_header }}
   {% include 'oldIE-js' %}
 
-  {{ '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' | script_tag }}
   {{ 'modernizr.min.js' | asset_url | script_tag }}
+
+  {{ '//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js' | script_tag }}
 
   {% comment %}
   If you store has customer accounts disabled, you can remove the following JS file
@@ -62,12 +62,9 @@
   {{ 'jquery.sticky.js' | asset_url | script_tag }}
   {{ 'froogaloop2.min.js' | asset_url | script_tag }}
   {{ 'jquery.flexslider.js' | asset_url | script_tag }}
-  
-  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
   {{ 'grids.min.js' | asset_url | script_tag }}
   {{ 'ajaxinate.js' | asset_url | script_tag }}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>  
 </head>
 
 {% comment %}
@@ -285,7 +282,7 @@ Add the page template as a class for easy page or template specific styling.
                   {% endcomment %}
                   {% assign logo_inverted_url = 'logo-inverted.png' | asset_url %}
                   <a href="/" itemprop="url" class="site-header__logo-link{% if settings.logo_use_inverted %} logo--has-inverted{% endif %}">
-                    <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+                    <img src="{{ 'logo-black.png' | asset_img_url: '200x' }}" alt="{{ shop.name }}" itemprop="logo">
                   </a>
                   {% if settings.logo_use_inverted %}
                   <a href="/" itemprop="url" class="logo--inverted">
@@ -368,7 +365,15 @@ Add the page template as a class for easy page or template specific styling.
                 </li>
                 {% else %}
                 <li class="site-nav__item site-nav__expanded-item{% unless template == 'index' %}{% if link.active %} site-nav--active{% endif %}{% endunless%}">
-                  <a href="{{ link.url }}" class="site-nav__link">{{ link.title }}</a>
+                  {% assign title = link.title | downcase | handle %}
+                  <a href="{{ link.url }}" class="site-nav__link">
+                    {% if "league shop bonus videos" contains title %}
+                      {% assign src = 'title-' | append: title | append: '.png' %}
+                      <img src="{{ src | asset_img_url: '300x' }}" class="site-nav__link-img site-nav__link-img--{{ title }}" />
+                    {% else %}
+                      {{ link.title }}
+                    {% endif %}
+                  </a>
                 </li>
                 {% endif %}
                 {% endfor %}
@@ -395,12 +400,11 @@ Add the page template as a class for easy page or template specific styling.
         {{ content_for_layout }}
       </div>
     </main> 
-{%- include 'footer' -%}
     
-
+    {%- include 'footer' -%}
   </div>
 
-{{ 'theme.js' | asset_url | script_tag }}
+  {{ 'theme.js' | asset_url | script_tag }}
   {{ 'simply.js' | asset_url | script_tag }}
   
 
@@ -462,9 +466,9 @@ Add the page template as a class for easy page or template specific styling.
   </script>
 
   <script>
-    $(window).load(function(){
+    // $(window).load(function(){
       //       $("#header").sticky({ topSpacing: 0 });
-    });
+    // });
 
     searchbar();
     function searchbar(){

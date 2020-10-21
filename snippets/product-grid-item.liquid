@@ -32,7 +32,7 @@ Example
   <div class="grid-product__wrapper product-hover-cover">
     <div class="grid-product__image-wrapper">
       <a class="grid-product__image-linksss" href="{{ product.url | within: collection }}">
-        <img src="{{ product | img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}" class="grid-product__image">
+        <img src="{{ product | img_url: '800x' }}" alt="{{ product.featured_image.alt | escape }}" class="grid-product__image">
       </a>
       {% if sold_out %}
       <div class="grid-product__sold-out">
