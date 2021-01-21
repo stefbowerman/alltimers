@@ -1,0 +1,74 @@
+<div data-section-id="{{ section.id }}" data-section-type="stockists">
+  <div class="grid">
+    <div class="grid__item large--five-sixths push--large--one-twelfth">
+
+      <header class="section-header text-center">
+        <h1>{{ page.title }}</h1>
+        <hr class="hr--small">
+      </header>
+
+      <div class="grid">
+        <div class="grid__item large--four-fifths push--large--one-tenth">
+          {% for block in section.blocks %}
+            <div class="stockists-region" data-stockists-region {{ block.shopify_attributes }}>
+              <h2 class="stockists-region-title">{{ block.settings.title }}</h2>
+
+              {% assign region_blog = blogs[block.settings.blog] %}
+              {% assign region_html = '' %}
+
+              {% for tag in region_blog.all_tags %}
+                {% assign tag_handle = tag | handle %}
+
+                {% capture tag_html %}
+                  <div class="stockists-block">
+                    <h3 class="stockists-block__title">{{ tag }}</h3>
+                    <ul class="stockists-list" data-stockists-list>
+                      {% for article in region_blog.articles limit: 200 %}
+                        {% if article.tags contains tag %}
+                          <li data-alpha="{{ article.title | handle }}">
+                            <div class="stockist-title">{{ article.title }}</div>
+                            <div class="stockist-content">{{ article.content }}</div>
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endcapture %}
+
+                {% assign region_html = region_html | append: tag_html %}
+              {% endfor %}
+
+              {{ region_html }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Stockists Page",
+    "settings": [],
+    "blocks" : [
+      {
+        "type": "region",
+        "name": "Region",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "blog",
+            "id": "blog",
+            "label": "Stockist Region Blog"
+          }
+        ]
+      }    
+    ]
+  }
+{% endschema %}

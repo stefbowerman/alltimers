@@ -4702,7 +4702,11 @@ header.site-header{
     &.site-nav__link-img--videos {
       max-width: 176px;
       top: 2px;
-    }    
+    }
+    &.site-nav__link-img--stockists {
+      max-width: 88px;
+      top: 3px;
+    }
   }
 
   // Main nav
@@ -5201,4 +5205,68 @@ figure.table table {
   .extra-product-dropdown-wrapper .extra-product-dropdown{
     max-width: 200px;
   }
+}
+
+// Stockist page
+.stockists-region {
+  opacity: 0;
+
+  &.is-sorted {
+    opacity: 1;
+    transition: opacity 250ms ease-out;
+  }
+
+  & + & {
+    margin-top: 3rem;
+  }
+}
+
+.stockists-region-title {
+  margin-bottom: 2.5rem;
+}
+
+.stockists-block__title {
+  margin: 1rem 0;
+}
+
+.stockists-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+
+  @media only screen and (min-width: 481px) {
+    justify-content: flex-start;
+  }
+
+  li {
+    display: block;
+    margin-bottom: 1.5rem;
+    flex: 1;
+    flex-basis: 100%;
+    max-width: 100%;
+
+    @media (min-width: $small) {
+      flex-basis: 50%;
+      max-width: 50%;
+      padding-right: 20px;
+    }
+
+    @media (min-width: $large) {
+      flex-basis: 33.33%;
+      max-width: 33.33%;
+    }
+  }  
+}
+
+.stockist-title {
+  margin-bottom: 5px;
+  font-size: 15px;
+}
+
+.stockist-content {
+  font-size: 13px;
 }
