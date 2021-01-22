@@ -17,7 +17,6 @@
               {% assign region_html = '' %}
 
               {% paginate region_blog.articles by 1000 %}
-
                 {% for tag in region_blog.all_tags %}
                   {% assign tag_handle = tag | handle %}
 
@@ -39,9 +38,8 @@
 
                   {% assign region_html = region_html | append: tag_html %}
                 {% endfor %}
-
               {% endpaginate %}
-              
+
               {{ region_html }}
             </div>
           {% endfor %}
