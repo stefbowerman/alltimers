@@ -16,28 +16,32 @@
               {% assign region_blog = blogs[block.settings.blog] %}
               {% assign region_html = '' %}
 
-              {% for tag in region_blog.all_tags %}
-                {% assign tag_handle = tag | handle %}
+              {% paginate region_blog.articles by 1000 %}
 
-                {% capture tag_html %}
-                  <div class="stockists-block">
-                    <h3 class="stockists-block__title">{{ tag }}</h3>
-                    <ul class="stockists-list" data-stockists-list>
-                      {% for article in region_blog.articles limit: 200 %}
-                        {% if article.tags contains tag %}
-                          <li data-alpha="{{ article.title | handle }}">
-                            <div class="stockist-title">{{ article.title }}</div>
-                            <div class="stockist-content">{{ article.content }}</div>
-                          </li>
-                        {% endif %}
-                      {% endfor %}
-                    </ul>
-                  </div>
-                {% endcapture %}
+                {% for tag in region_blog.all_tags %}
+                  {% assign tag_handle = tag | handle %}
 
-                {% assign region_html = region_html | append: tag_html %}
-              {% endfor %}
+                  {% capture tag_html %}
+                    <div class="stockists-block">
+                      <h3 class="stockists-block__title">{{ tag }}</h3>
+                      <ul class="stockists-list" data-stockists-list>
+                        {% for article in region_blog.articles %}
+                          {% if article.tags contains tag %}
+                            <li data-alpha="{{ article.title | handle }}">
+                              <div class="stockist-title">{{ article.title }}</div>
+                              <div class="stockist-content">{{ article.content }}</div>
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endcapture %}
 
+                  {% assign region_html = region_html | append: tag_html %}
+                {% endfor %}
+
+              {% endpaginate %}
+              
               {{ region_html }}
             </div>
           {% endfor %}
