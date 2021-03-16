@@ -1,0 +1,29 @@
+{% if section.settings.video_url != blank %}
+  <style>
+    #{{ section.id }}-vid {
+      margin: 30px auto 100px;
+      margin-bottom: 9vw;
+      max-width: 1100px;
+    }
+  </style>
+  
+  <div id="{{ section.id }}-vid">
+    <iframe src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Collection Video",
+  "settings": [
+    {
+      "id": "video_url",
+      "type": "video_url",
+      "label": "Video URL",
+      "accept": ["vimeo"],
+      "default": "https://vimeo.com/486433183",
+      "info": "Vimeo URL"
+    }
+  ]
+}
+{% endschema %}

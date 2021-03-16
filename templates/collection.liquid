@@ -1,3 +1,7 @@
 <!-- /templates/collection.liquid -->
 
+{% if collection.handle == 'all-products' %}
+  {% section 'collection-video' %}
+{% endif %}
+
 {% include 'collection-template' %}
