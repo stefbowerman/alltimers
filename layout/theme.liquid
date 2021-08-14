@@ -559,14 +559,13 @@ Add the page template as a class for easy page or template specific styling.
         var cart_vald = parseInt($(".site-nav__item .cart-link__bubble").text());
         var cart_valm = parseInt($(".site-nav--mobile .cart-link__bubble").text());
 
-        var qty_val = parseInt($("#Quantity").val()); 
+        var qty_val = parseInt($("#Quantity").val()) || 1; 
 
         var totald = cart_vald + qty_val;
         var totalm = cart_valm + qty_val;
 
         $(".site-nav__item .cart-link__bubble").text(totald);
         $(".site-nav--mobile .cart-link__bubble").text(totalm);
-
       });
     });
 

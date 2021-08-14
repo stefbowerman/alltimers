@@ -158,10 +158,13 @@
             {% endif %}
 
             {% if settings.enable_qty %}
-            <div class="product-single__quantity">
-              <label for="Quantity" class="product-single__quantity-label js-quantity-selector">{{ 'products.product.quantity' | t }}</label>
-              <input type="number" hidden="hidden" id="Quantity" name="quantity" value="1" min="1" class="js-quantity-selector">
-            </div>
+              <div class="product-single__quantity">
+                <label for="Quantity" class="product-single__quantity-label js-quantity-selector">{{ 'products.product.quantity' | t }}</label>
+                <input type="number" hidden="hidden" id="Quantity" name="quantity" value="1" min="1" class="js-quantity-selector">
+              </div>
+            {% else %}
+              {% comment %} Add a hidden one so that JS doesn't break {% endcomment %}
+              <input type="hidden" id="Quantity" name="quantity" value="1" />
             {% endif %}
 
             <div class="product-single__add-to-cart">
