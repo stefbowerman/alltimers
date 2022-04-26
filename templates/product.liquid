@@ -102,33 +102,10 @@
 
           <span id="ProductPrice" class="product-single__price{% if product.compare_at_price > product.price %} on-sale{% endif %}" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
             {{ current_variant.price | money }}
-          </span> 
+          </span>           
 
           <meta itemprop="priceCurrency" content="{{ shop.currency }}">
           <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
-
-          <div class="product-single__description rte" itemprop="description">
-            {{ product.description }}
-          </div>
-	
-          
-          {% for tag in product.tags %}
-            {% if tag contains 'size_chart' %}
-              <div class="size_chart_btn">
-                <a data-fancybox data-src="#size_chart_modal" href="javascript:;" class="">Size Chart</a>
-              </div>
-            {% endif %}
-          {% endfor %}
-          
-        
-          
-          <div style="display: none;" id="size_chart_modal">
-            <div class="size-chart">
-              <h3>{{ product.title }}</h3>
-              
-              {{ product.metafields.product_size_name.product_sizechart }}
-            </div>
-          </div>
 
           <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-single__form" id="AddToCartForm">
             <select name="id" id="ProductSelect" class="product-single__variants">
@@ -176,7 +153,34 @@
                 <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
               </button>
             </div>
+
+            {% comment %}
+              Dynamic Checkout Button
+              - https://help.shopify.com/en/themes/customization/store/dynamic-checkout-buttons
+            {% endcomment %}
+            {{ form | payment_button }}            
           </form>
+
+          <div class="product-single__description rte" itemprop="description">
+            {{ product.description }}
+          </div>
+	
+          {% for tag in product.tags %}
+            {% if tag contains 'size_chart' %}
+              <div class="size_chart_btn">
+                <a data-fancybox data-src="#size_chart_modal" href="javascript:;" style="border-bottom: 1px solid;">See Size Chart</a>
+              </div>
+              
+              <div style="display: none;" id="size_chart_modal">
+                <div class="size-chart">
+                  <h3>{{ product.title }}</h3>
+                  
+                  {{ product.metafields.product_size_name.product_sizechart }}
+                </div>
+              </div>
+              {% break %}
+            {% endif %}
+          {% endfor %} 
 
         </div>
       </div>
@@ -184,8 +188,7 @@
   </div>
 
   {% if collection %}
-  <hr class="hr--clear">
-  <div class="text-center">
+  <div class="text-center" style="margin-top: 150px;">
     <a href="{{ collection.url }}" class="return-link">&larr; {{ 'products.general.collection_return' | t: collection: collection.title }}</a>
   </div>
   {% endif %}
