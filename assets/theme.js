@@ -1295,18 +1295,19 @@ theme.clearCollageGridHeights = function () {
   theme.cache.$productGridPhotosLarge.removeAttr('style');
 }
 
+// We don't need this anymore since all images are squares and inline styles suck
 theme.equalHeights = function () {
-  theme.cache.$window.on('load', resizeElements());
+  // theme.cache.$window.on('load', resizeElements());
 
-  theme.cache.$window.on('resize',
-    afterResize(function() {
-      resizeElements();
-    }, 250, 'equal-heights')
-  );
+  // theme.cache.$window.on('resize',
+  //   afterResize(function() {
+  //     resizeElements();
+  //   }, 250, 'equal-heights')
+  // );
 
-  function resizeElements() {
-    theme.cache.$productGridImages.css('height', 'auto').equalHeights();
-  }
+  // function resizeElements() {
+  //   theme.cache.$productGridImages.css('height', 'auto').equalHeights();
+  // }
 };
 
 theme.initStickyProductMeta = function () {
