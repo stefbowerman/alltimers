@@ -5062,8 +5062,8 @@ html{padding-bottom:0 !important;}
 /*       direction: rtl; */
       padding: 0 5px;
       .title{
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 9px;
+        // border-bottom: 1px solid #ddd;
+        // padding-bottom: 9px;
         display:none;
         span{line-height:normal;}
       }
@@ -5141,9 +5141,9 @@ html{padding-bottom:0 !important;}
 
 
 /* template-collection */
-@media (min-width:320px) and (max-width:667px){
-.collection_sidebar .list { display: none; }
-.collection_sidebar .title { display: block !important; }
+@include at-query($max, $small) {
+  .collection_sidebar .list { display: none; }
+  .collection_sidebar .title { display: block !important; }
 }
 
 #AjaxinatePagination{text-align:center;float: left; width: 100%;}

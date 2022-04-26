@@ -2,7 +2,7 @@
 <style>
   .collection_sidebar .side_bar_menu .title{
     font-size:{{section.settings.title_fontsize}}px;
-	font-family:{{ section.settings.sidebar_font_family.family }}, {{ section.settings.sidebar_font_family.fallback_families }};
+	  font-family:{{ section.settings.sidebar_font_family.family }}, {{ section.settings.sidebar_font_family.fallback_families }};
   }
   .collection_sidebar .side_bar_menu ul.list a{
     font-size:{{ section.settings.link_size }}px;
@@ -26,7 +26,7 @@
   <div class='side_bar_menu'>
     {%- for block in section.blocks -%}
     <div class="menu_wrap">
-      <h3 class="title">{{linklists[block.settings.menu].title}} <span class="icon icon-plus"></span></h3>
+      <h3 class="title">{{ linklists[block.settings.menu].title }} <span class="icon icon-plus"></span></h3>
       <ul class="list">
         {% for link in linklists[block.settings.menu].links %}
         <li>
@@ -41,12 +41,7 @@
   </div>
 </div>
 
-
-{%- comment -%}
-<script>
-  {%- endcomment -%}
-
-  {% schema %}
+{% schema %}
   
   
   {
