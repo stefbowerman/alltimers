@@ -597,11 +597,10 @@ Add the page template as a class for easy page or template specific styling.
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      var endlessScroll = new Ajaxinate();
+      var endlessScroll = new Ajaxinate({
+        offset: 500
+      });
     });
   </script>
-  
-  
-  
 </body>
 </html>

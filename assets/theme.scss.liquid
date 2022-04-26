@@ -172,6 +172,12 @@ Brooklyn by Shopify
   width: 1px;
 }
 
+@mixin hasHover {
+  @media (hover: hover) {
+    @content;
+  }
+}
+
 /*================ Animations and keyframes ================*/
 @include keyframes(spin) {
   0% {
@@ -2721,23 +2727,23 @@ that were modified above
   }
 }
 
-.tags--collection {
-  max-width: 75%;
-  margin: 0 auto 25px;
+// .tags--collection {
+//   max-width: 75%;
+//   margin: 0 auto 25px;
 
-  @include at-query($min, $large) {
-    li {
-      display: inline-block;
-    }
-  }
+//   @include at-query($min, $large) {
+//     li {
+//       display: inline-block;
+//     }
+//   }
 
-  @include at-query($max, $small) {
-    li {
-      display: block;
-    }
-  }
+//   @include at-query($max, $small) {
+//     li {
+//       display: block;
+//     }
+//   }
 
-}
+// }
 
 .tags--article {
   a {
@@ -3007,8 +3013,11 @@ button.mfp-arrow {
 }
 
 .grid-product__wrapper {
-  text-align: center;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: $gutter;
+  text-align: center;
 
   .grid-collage & {
     margin-bottom: 0;
@@ -5091,10 +5100,12 @@ html{padding-bottom:0 !important;}
   .product-hover-cover{
     position: relative;
 
-    &:hover .product-details{display:block;}
-    &:hover .grid-product__image-wrapper{
-      opacity: 0.6;
-      @include transition(opacity 0.15s ease-in);
+    @include hasHover {
+      &:hover .product-details{display:block;}
+      &:hover .grid-product__image-wrapper{
+        opacity: 0.6;
+        @include transition(opacity 0.15s ease-in);
+      }
     }
     
     .grid-product__image-wrapper{
