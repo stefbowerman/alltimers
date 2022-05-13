@@ -15,17 +15,17 @@ Example
 {% endcomment %}
 
 {% unless grid_item_width %}
-{% assign grid_item_width = 'large--one-quarter medium--one-quarter small--one-half' %}
+  {% assign grid_item_width = 'large--one-quarter medium--one-quarter small--one-half' %}
 {% endunless %}
 
 {% assign on_sale = false %}
 {% if product.compare_at_price > product.price %}
-{% assign on_sale = true %}
+  {% assign on_sale = true %}
 {% endif %}
 
 {% assign sold_out = true %}
 {% if product.available %}
-{% assign sold_out = false %}
+  {% assign sold_out = false %}
 {% endif %}
 
 <div class="grid__item grid-product {{ grid_item_width }}{% comment %}{{ grid_item_width }}{% endcomment %}{% if sold_out %} is-sold-out{% endif %}">
@@ -40,15 +40,19 @@ Example
           class="grid-product__image"
         >
       </a>
+ 
       {% if sold_out %}
         <div class="grid-product__sold-out">
-          <p>{{ 'products.product.sold_out_html' | t }}</p>
+          <div class="grid-product__sold-out-text">
+            {% for i in (1..10) %}SOLD OUT &nbsp;&nbsp;{% endfor %}
+          </div>
         </div>
       {% elsif on_sale %}
         {% if settings.product_sale_enable  %}
           <div class="grid-product__on-sale">
-            {% capture saved_amount %}{{ product.compare_at_price | minus: product.price | money_without_trailing_zeros }}{% endcapture %}
-            <p>{{ 'products.general.save_html' | t: saved_amount: saved_amount }}</p>
+            <div class="grid-product__on-sale-text">
+              {% for i in (1..10) %}ON SALE 💸&nbsp;&nbsp;{% endfor %}
+            </div>
           </div>
         {% endif %}
       {% endif %}
