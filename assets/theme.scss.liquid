@@ -3155,6 +3155,15 @@ button.mfp-arrow {
   white-space: nowrap;
   overflow: hidden;
   transform: translateY(-50%);
+  opacity: 1;
+  transition: opacity 250ms ease-in 50ms;
+
+  @media (hover: hover) {
+    .product-hover-cover:hover & {
+      opacity: 0;
+      transition: opacity 50ms ease-out;
+    }
+  }  
 }
 
 .grid-product__sold-out-text,
