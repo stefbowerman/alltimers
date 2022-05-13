@@ -5271,3 +5271,29 @@ figure.table table {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+// Header logo updates
+@keyframes spin {
+  from { transform: roate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.site-header__logo-round-link {
+  position: relative;
+  display: inline-block !important;
+
+  img {
+    max-width: 140px;
+  }
+
+  .site-header.is-sticky & img {
+    max-width: 105px;
+  }
+
+  .site-header__logo-round-link-outer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: spin 20s linear infinite;
+  }
+}

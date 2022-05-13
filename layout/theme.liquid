@@ -272,29 +272,40 @@ Add the page template as a class for easy page or template specific styling.
               Site name gets precedence with H1 tag on homepage, div on other pages.
               {% endcomment %}
               {% if template == 'index' %}
-              <h1 class="site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
-                {% else %}
+                <h1 class="site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+              {% else %}
                 <div class="h1 site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
-                  {% endif %}
-                  {% if settings.logo_use_image %}
+              {% endif %}
+
+                {% if settings.logo_use_image %}
+                  <a href="/" itemprop="url" class="site-header__logo-round-link">
+                    <img src="{{ 'logo-round-inner.png' | asset_img_url: '300x' }}" class="site-header__logo-round-link-inner" />
+                    <img src="{{ 'logo-round-outer.png' | asset_img_url: '300x' }}" class="site-header__logo-round-link-outer" />
+                  </a>
                   {% comment %}
                   .logo--has-inverted is only applied to the default logo if the inverted logo exists. That way it'll only be hidden on the slider when it has a backup.
                   {% endcomment %}
+
+                  {% comment %}
                   {% assign logo_inverted_url = 'logo-inverted.png' | asset_url %}
+
                   <a href="/" itemprop="url" class="site-header__logo-link{% if settings.logo_use_inverted %} logo--has-inverted{% endif %}">
                     <img src="{{ 'logo-black.png' | asset_img_url: '200x' }}" alt="{{ shop.name }}" itemprop="logo">
                   </a>
+
                   {% if settings.logo_use_inverted %}
-                  <a href="/" itemprop="url" class="logo--inverted">
-                    <img src="{{ 'logo-inverted.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
-                  </a>
+                    <a href="/" itemprop="url" class="logo--inverted">
+                      <img src="{{ 'logo-inverted.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+                    </a>
                   {% endif %}
-                  {% else %}
-                  <a href="/" itemprop="url">{{ shop.name }}</a>
-                  {% endif %}
-                  {% if template == 'index' %}
-                  </h1>
+                   {% endcomment %}
                 {% else %}
+                  <a href="/" itemprop="url">{{ shop.name }}</a>
+                {% endif %}
+
+              {% if template == 'index' %}
+                </h1>
+              {% else %}
                 </div>
               {% endif %}
             </div>
