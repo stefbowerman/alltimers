@@ -48,7 +48,7 @@ Example
           </div>
         </div>
       {% elsif on_sale %}
-        {% if settings.product_sale_enable  %}
+        {% if settings.product_sale_enable %}
           <div class="grid-product__on-sale">
             <div class="grid-product__on-sale-text">
               {% for i in (1..10) %}ON SALE 💸&nbsp;&nbsp;{% endfor %}
@@ -57,39 +57,31 @@ Example
         {% endif %}
       {% endif %}
     </div>
+
     <a href="{{ product.url | within: collection }}">
       <div class="product-details">
         <div class="grid-product__meta position-content">
-          <span class="grid-product__price-wrap">
-            <div class="hoverprice">
-              <div class="producttitlediv">
-                {{ product.title }}
-              </div>
-
-              <div class="productprice">
-                <span class="grid-product__price">
-                  {% if on_sale %}
-                    <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
-                  {% else %}
-                    <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
-                  {% endif %}
-
-                  {% if product.price_varies %}
-                    {{ product.price_min | money_without_trailing_zeros }}
-                    <span class="icon-fallback-text">
-                      <span class="icon icon-plus grid-product__price-min" aria-hidden="true"></span>
-                      <span class="fallback-text">+</span>
-                    </span>
-                  {% else %}
-                    {{ product.price | money_without_trailing_zeros }}
-                  {% endif %}
-                </span>
-              </div>
+          <div>
+            <div class="grid-product__meta-title">
+              {{ product.title }}
             </div>
-          </span>
+            <div class="grid-product__meta-price">
+              {% if on_sale %}
+                <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+              {% else %}
+                <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+              {% endif %}
+
+              {% if product.price_varies %}
+                {{ product.price_min | money_without_trailing_zeros }}
+              {% else %}
+                {{ product.price | money_without_trailing_zeros }}
+              {% endif %}              
+            </div>
+          </div>
 
           {% if settings.product_vendor_enable %}
-          <p class="grid-product__vendor">{{ product.vendor }}</p>
+            <p class="grid-product__vendor">{{ product.vendor }}</p>
           {% endif %}
         </div>
       </div>
