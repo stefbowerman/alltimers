@@ -1,0 +1,303 @@
+<header class="site-header" id="header" role="banner">
+  {% if section.settings.banner_enabled %}
+    <div class="header-top">
+      {% if section.settings.sales_goal_enabled %}
+        {% assign cart_total           = cart.total_price | money_without_currency | times: 1 %}
+        {% assign goal_amount          = section.settings.sales_goal_amount | times: 1 %}
+        {% assign goal_pitch           = section.settings.sales_goal_pitch %}
+        {% assign goal_remaining_pre   = section.settings.sales_goal_remaining_pre %}
+        {% assign goal_remaining_post  = section.settings.sales_goal_remaining_post %}
+        {% assign goal_success_message = section.settings.sales_goal_success_message %}
+
+        {% if cart_total == 0 %}
+          {{ goal_pitch }}
+        {% elsif cart_total > goal_amount %}
+          {{ goal_success_message }}
+        {% else %}
+          {{ goal_remaining_pre }} {{ goal_amount | minus: cart_total | times: 100 | money_without_trailing_zeros }} {{ goal_remaining_post }}
+        {% endif %}
+      {% else %}
+        {{ section.settings.banner_content }}
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="wrapper">
+    <div class="grid--table header-top-section">
+      <div class="grid__item large--one-third large--text-right medium-down--hide">
+        <ul class="right-icons">
+
+          {% comment %}
+          Change search_modal to false if you'd prefer the search icon
+          to link to the search page.
+          {% endcomment %}
+
+          {% if settings.header_search_enable %}
+          <!--                 <li class="site-nav__item">
+<a href="/search" class="site-nav__link site-nav__link--icon{% if search_modal %} js-toggle-search-modal{% endif %}" data-mfp-src="#SearchModal">
+<span class="icon-fallback-text">
+<span class="icon icon-search" aria-hidden="true"></span>
+<span class="fallback-text">{{ 'general.search.title' | t }}</span>
+</span>
+</a>
+</li> -->
+          <li class="site-nav__item search-box">
+            <form action="/search" method="get" class="search-bar1 search" role="search">
+              <input type="hidden" name="type" value="product">
+
+              <input type="search" name="q" value="" placeholder="Search" aria-label="Search all products..." class="search-text">
+              <input type="submit" value="" class="search-icon"/>
+
+            </form>
+          </li>
+
+          {% endif %}                
+
+          <li class="site-nav__item">
+            <a href="/cart" class="site-nav__link site-nav__link--icon cart-link js-drawer-open-right" aria-controls="CartDrawer">
+              <span class="icon-fallback-text">
+                <span class="icon icon-cart" aria-hidden="true"></span>
+                <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
+              </span>
+              <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
+            </a>
+          </li>
+          <li class="site-nav__item currency-box">{% include 'currency-picker' %}</li>
+
+          {% if shop.customer_accounts_enabled %}
+          <li class="site-nav__item site-nav__expanded-item">
+            <a class="site-nav__link site-nav__link--icon" href="/account">
+              <span class="icon-fallback-text">
+                <span class="icon icon-customer" aria-hidden="true"></span>
+                <span class="fallback-text">
+                  {% if customer %}
+                  {{ 'layout.customer.account' | t }}
+                  {% else %}
+                  {{ 'layout.customer.log_in' | t }}
+                  {% endif %}
+                </span>
+              </span>
+            </a>
+          </li>
+          {% endif %}                              
+
+        </ul>
+
+
+        <!-- //site-nav -->
+      </div>
+    </div>
+    <div class="grid--full grid--table header-bot-section">
+      <div class="grid__item large--hide one-quarter">
+        <div class="site-nav--mobile">
+          <button type="button" class="icon-fallback-text site-nav__link js-drawer-open-left" aria-controls="NavDrawer">
+            <span class="icon icon-hamburger" aria-hidden="true"></span>
+            <span class="fallback-text">{{ 'general.drawers.navigation' | t }}</span>
+          </button>
+        </div> 
+      </div>
+      <div class="grid__item large--one-tenth medium-down--one-half">
+        {% comment %}
+        Use the uploaded logo from theme settings if enabled.
+        Site name gets precedence with H1 tag on homepage, div on other pages.
+        {% endcomment %}
+        {% if template == 'index' %}
+          <h1 class="site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+        {% else %}
+          <div class="h1 site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+        {% endif %}
+
+          {% if settings.logo_use_image %}
+            <a href="/" itemprop="url" class="site-header__logo-round-link">
+              <img src="{{ 'logo-round-inner.png' | asset_img_url: '300x' }}" class="site-header__logo-round-link-inner" />
+              <img src="{{ 'logo-round-outer.png' | asset_img_url: '300x' }}" class="site-header__logo-round-link-outer" />
+            </a>
+            {% comment %}
+            .logo--has-inverted is only applied to the default logo if the inverted logo exists. That way it'll only be hidden on the slider when it has a backup.
+            {% endcomment %}
+
+            {% comment %}
+            {% assign logo_inverted_url = 'logo-inverted.png' | asset_url %}
+
+            <a href="/" itemprop="url" class="site-header__logo-link{% if settings.logo_use_inverted %} logo--has-inverted{% endif %}">
+              <img src="{{ 'logo-black.png' | asset_img_url: '200x' }}" alt="{{ shop.name }}" itemprop="logo">
+            </a>
+
+            {% if settings.logo_use_inverted %}
+              <a href="/" itemprop="url" class="logo--inverted">
+                <img src="{{ 'logo-inverted.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+              </a>
+            {% endif %}
+              {% endcomment %}
+          {% else %}
+            <a href="/" itemprop="url">{{ shop.name }}</a>
+          {% endif %}
+
+        {% if template == 'index' %}
+          </h1>
+        {% else %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="grid__item large--hide one-quarter">
+        <div class="site-nav--mobile text-right">
+          <a href="/cart" class="site-nav__link cart-link js-drawer-open-right" aria-controls="CartDrawer">
+            <span class="icon-fallback-text">
+              <span class="icon icon-cart" aria-hidden="true"></span>
+              <span class="fallback-text">{{ 'layout.cart.title' | t }}</span>
+            </span>
+            <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}">{{ cart.item_count }}</span>
+          </a>
+
+        </div>
+      </div> 
+
+      <div class="grid__item large--three-quarters large--text-center medium-down--hide vertical-top header-nav-menu">
+        {% comment %}
+        List out your main-menu linklist (default)
+
+        More info on linklists:
+        - http://docs.shopify.com/themes/liquid-variables/linklists
+        {% endcomment %}
+        <!-- begin site-nav -->
+        <ul class="site-nav" id="AccessibleNav">
+          <li class="site-nav__item site-nav--compress__menu">
+            <button type="button" class="icon-fallback-text site-nav__link site-nav__link--icon js-drawer-open-left" aria-controls="NavDrawer">
+              <span class="icon icon-hamburger" aria-hidden="true"></span>
+              <span class="fallback-text">{{ 'general.drawers.navigation' | t }}</span>
+            </button>
+          </li>
+          {% for link in linklists[settings.header_menu].links %}
+          {% comment %}
+          Create a dropdown menu by naming a linklist the same as a link in the parent nav
+
+          More info on dropdowns:
+          - http://docs.shopify.com/manual/your-website/navigation/create-drop-down-menu
+          {% endcomment %}
+          {% assign child_list_handle = link.title | handleize %}
+          {% if linklists[child_list_handle].links != blank %}
+          <li class="site-nav__item site-nav__expanded-item site-nav--has-dropdown{% unless template == 'index' %}{% if link.active %} site-nav--active{% endif %}{% endunless%}{% if link.handle == "collections" and settings.nav_img_enable %} mega-menu--enabled{% endif %}" aria-haspopup="true">
+            <a href="{{ link.url }}" class="site-nav__link">
+              {{ link.title }}
+              <!--                         <span class="icon icon-arrow-down" aria-hidden="true"></span> -->
+            </a>
+            <ul class="site-nav__dropdown text-left">
+              <li>
+                <ul class="nav-links">
+                  {% for childlink in linklists[child_list_handle].links %}
+                  <li{% if childlink.active %} class="site-nav--active"{% endif %}>
+                    <a href="{{ childlink.url }}" class="site-nav__dropdown-link">{{ childlink.title | escape }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+
+                {% if link.handle == "collections" %}
+                {% if settings.nav_img_enable %}                        
+                <ul class="nav-img">
+                  <li><a href="{{ settings.col_1_link }}"><img src="{{ 'col-1.png' | asset_url }}" /></a></li>
+                  <li><a href="{{ settings.col_2_link }}"><img src="{{ 'col-2.png' | asset_url }}" /></a></li>
+                  <li><a href="{{ settings.col_3_link }}"><img src="{{ 'col-3.png' | asset_url }}" /></a></li>
+                </ul>
+                {% endif %}
+                {% endif %}
+              </li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="site-nav__item site-nav__expanded-item{% unless template == 'index' %}{% if link.active %} site-nav--active{% endif %}{% endunless%}">
+            {% assign title = link.title | downcase | handle %}
+            <a href="{{ link.url }}" class="site-nav__link">
+              {% if "league shop bonus videos stockists" contains title %}
+                {% assign src = 'title-' | append: title | append: '.png' %}
+                <img src="{{ src | asset_img_url: '300x' }}" class="site-nav__link-img site-nav__link-img--{{ title }}" />
+              {% else %}
+                {{ link.title }}
+              {% endif %}
+            </a>
+          </li>
+          {% endif %}
+          {% endfor %}
+
+        </ul>
+      </div>
+    </div>
+    {% comment %}
+    Remove comment tags below to add a search box to your header.
+    {% endcomment %}
+
+    {% comment %}
+    <div class="grid--full large--right medium-down--hide ">
+      {% include 'search-bar', search_btn_style: 'btn', search_bar_location: 'search-bar--header' %}
+    </div>
+    {% endcomment %}
+
+  </div>
+</header>
+
+{% schema %}
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Pencil Banner"
+      },
+      {
+        "id": "banner_enabled",
+        "type": "checkbox",
+        "label": "Show Pencil Banner",
+        "default": false
+      },
+      {
+        "id": "banner_content",
+        "type": "textarea", 
+        "label": "Pencil Banner Content",
+        "default": "Default Banner Text"
+      },
+      {
+        "type": "header",
+        "content": "Sales Motivation",
+        "info": "Create goals for customers to reach a certain cart total.  If this feature is enabled, the above settings will no longer apply."
+      },
+      {
+        "type": "checkbox",
+        "id": "sales_goal_enabled",
+        "label": "Sales Goal Enabled",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "sales_goal_amount",
+        "label": "Goal Amount",
+        "info": "This is the cart total you would like to motivate your customers to reach. You should have some type of a reward at this amount such as 'Free Shipping', a 'Free Gift' or something else.",
+        "default": "100.00"
+      },
+      {
+        "type": "textarea",
+        "id": "sales_goal_pitch",
+        "label": "Pitch",
+        "info": "The first time a visitor lands on your store this message will be displayed. It should be something that tells them what the goal is and what they need to spend to get it.",
+        "default": "Free shipping to continental U.S. on orders $100"
+      },
+      {
+        "type": "text",
+        "id": "sales_goal_remaining_pre",
+        "label": "Goal Text (before cart total)",
+        "default": "You are"
+      },
+      {
+        "type": "text",
+        "id": "sales_goal_remaining_post",
+        "label": "Goal Text (after cart total)",
+        "default": "away from receiving free shipping"
+      },
+      {
+        "type": "textarea",
+        "id": "sales_goal_success_message",
+        "label": "Goal Success Message",
+        "default": "You have FREE shipping"
+      }        
+    ]
+  }
+{% endschema %}
