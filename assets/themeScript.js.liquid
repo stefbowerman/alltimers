@@ -1501,49 +1501,47 @@ theme.debounce = function(n,t,u){var e;return function(){var a=this,r=arguments,
 // Initialize theme's JS on docready
 $(theme.init);
 
-            {% if settings.cart_type == "page" %}
-            $('.add_to_cart').on('click',function(e){
-              e.preventDefault();
-              var main_product_id = $('.product-single__variants option:selected').data('id');
-              var secondary_product_id = $('.extra-product-dropdown option:selected').data('id');
-              //               console.log('------', main_product_id , secondary_product_id);
+{% if settings.cart_type == "page" %}
+  $('.add_to_cart').on('click',function(e){
+    e.preventDefault();
+    var main_product_id = $('.product-single__variants option:selected').data('id');
+    var secondary_product_id = $('.extra-product-dropdown option:selected').data('id');
+    //               console.log('------', main_product_id , secondary_product_id);
 
-              var params = {
-                type: 'POST',
-                url: '/cart/add.js',
-                data: jQuery('.product-single__form').serialize(),
-                dataType: 'json',
-                success: function(line_item) {
-                  console.log('product added');
+    var params = {
+      type: 'POST',
+      url: '/cart/add.js',
+      data: jQuery('.product-single__form').serialize(),
+      dataType: 'json',
+      success: function(line_item) {
+        console.log('product added');
 
-                },
-                error: function(XMLHttpRequest, textStatus) {
-                  console.log('product not added')
-                }
-              };
-              jQuery.ajax(params);
+      },
+      error: function(XMLHttpRequest, textStatus) {
+        console.log('product not added')
+      }
+    };
+    jQuery.ajax(params);
 
 
-              setTimeout(function(){
-                if(secondary_product_id != ""){
-                  $.ajax({
-                    type: 'POST',
-                    url: '/cart/add.js',
-                    data: 'quantity='+1+'&id='+secondary_product_id,
-                    dataType: 'json',
-                    async:false,
-                    success: function() {
-                      console.log('secondary product added')
-
-                    },
-                    error: function(er) {
-                      var err = $.parseJSON(er.responseText);
-                      return false;
-                    }
-                  });
-                }
-                location.replace("/cart");
-              }, 100);
-				
-            })
-            {% endif %}
+    setTimeout(function(){
+      if(secondary_product_id != ""){
+        $.ajax({
+          type: 'POST',
+          url: '/cart/add.js',
+          data: 'quantity='+1+'&id='+secondary_product_id,
+          dataType: 'json',
+          async:false,
+          success: function() {
+            console.log('secondary product added')
+          },
+          error: function(er) {
+            var err = $.parseJSON(er.responseText);
+            return false;
+          }
+        });
+      }
+      location.replace("/cart");
+    }, 100);
+  })
+{% endif %}

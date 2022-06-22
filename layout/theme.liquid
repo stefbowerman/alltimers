@@ -199,7 +199,7 @@ Add the page template as a class for easy page or template specific styling.
     {%- include 'footer' -%}
   </div>
 
-  {{ 'theme.js' | asset_url | script_tag }}
+  {{ 'themeScript.js' | asset_url | script_tag }}
   {{ 'simply.js' | asset_url | script_tag }}
   
 
@@ -220,25 +220,26 @@ Add the page template as a class for easy page or template specific styling.
   - http://shopify.com/timber#ajax-cart
   {% endcomment %}
   {% if settings.cart_type == 'drawer' %}
-  {% include 'ajax-cart-template' %}
-  {{ 'ajax-cart.js' | asset_url | script_tag }}
-  <script>
-    jQuery(function($) {
-      ajaxCart.init({
-        formSelector: '#AddToCartForm',
-        cartContainer: '#CartContainer',
-        addToCartSelector: '#AddToCart',
-        enableQtySelectors: true,
-        moneyFormat: {{ shop.money_format | json }}
-      });
-      });
-  </script>
+    {% include 'ajax-cart-template' %}
+    {{ 'ajax-cart.js' | asset_url | script_tag }}
+
+    <script>
+      jQuery(function($) {
+        ajaxCart.init({
+          formSelector: '#AddToCartForm',
+          cartContainer: '#CartContainer',
+          addToCartSelector: '#AddToCart',
+          enableQtySelectors: true,
+          moneyFormat: {{ shop.money_format | json }}
+        });
+        });
+    </script>
   {% endif %}
 
   {% if settings.header_search_enable %}
-  <div id="SearchModal" class="mfp-hide">
-    {% include 'search-bar', search_btn_style: 'btn', search_bar_location: 'search-bar--modal' %}
-  </div>
+    <div id="SearchModal" class="mfp-hide">
+      {% include 'search-bar', search_btn_style: 'btn', search_bar_location: 'search-bar--modal' %}
+    </div>
   {% endif %}
 
   
