@@ -8,7 +8,11 @@
   </style>
   
   <div id="{{ section.id }}-vid">
-    <iframe src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+    {% if section.settings.video_url.type == 'vimeo' %}
+      <iframe src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+    {% elsif section.settings.video_url.type == 'youtube' %}
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ section.settings.video_url.id }}?modestbranding=1&playsinline=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    {% endif %}
   </div>
 {% endif %}
 
@@ -20,9 +24,9 @@
       "id": "video_url",
       "type": "video_url",
       "label": "Video URL",
-      "accept": ["vimeo"],
+      "accept": ["vimeo", "youtube"],
       "default": "https://vimeo.com/486433183",
-      "info": "Vimeo URL"
+      "info": "Vimeo or YouTube URL"
     }
   ]
 }
