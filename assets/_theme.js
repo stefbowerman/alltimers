@@ -1002,6 +1002,7 @@ theme.init = function () {
   theme.hideSingleSelectors();
   theme.styleTextLinks();
   theme.searchModal();
+  theme.stockists();
 
   
     theme.productImageZoom();
@@ -1181,6 +1182,49 @@ theme.searchModal = function() {
     tClose: 'Close (Esc)',
     alignTop: true,
     removalDelay: 500
+  });
+}
+
+theme.stockists = function() {
+  function isExternal(url) {
+    var match = url.match(/^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/);
+    if (typeof match[1] === "string" && match[1].length > 0 && match[1].toLowerCase() !== location.protocol) return true;
+    if (typeof match[2] === "string" && match[2].length > 0 && match[2].replace(new RegExp(":("+{ "http:":80, "https:":443 }[location.protocol]+")?$"), "") !== location.host) return true;
+    return false;
+  }
+
+  var $stockistsRegions = $('[data-stockists-region]')
+  var $stockistsLists = $('[data-stockists-list]')
+
+  if ($stockistsLists.length === 0) return
+
+  $stockistsLists.each(function(i, el) {
+    var $list = $(el);
+    var $lis  = $list.children().detach();
+
+    $lis.sort((a, b) => {
+      const aAlph = $(a).data('alpha').toString();
+      const bAlph = $(b).data('alpha').toString();
+
+      if (aAlph > bAlph) {
+        return 1;
+      }
+      if (aAlph < bAlph) {
+        return -1;
+      }
+      
+      return 0;
+    });
+
+    $list.append($lis);
+  });
+
+  $stockistsRegions.addClass('is-sorted');  
+
+  $stockistsLists.find('a').each(function(i, el) {
+    if (isExternal(el.getAttribute('href'))) {
+      el.setAttribute('target', '_blank');
+    }
   });
 }
 
