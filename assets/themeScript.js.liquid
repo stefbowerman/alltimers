@@ -68,7 +68,7 @@ if (!Shopify.formatMoney) {
   Shopify.formatMoney = function(cents, format) {
     var value = '',
         placeholderRegex = /\{\{\s*(\w+)\s*\}\}/,
-        formatString = (format || this.money_format);
+        formatString = (format || this.money_format || {% raw %}'${{amount}}'{% endraw %});
 
     if (typeof cents == 'string') {
       cents = cents.replace('.','');
@@ -235,7 +235,11 @@ timber.accessibleNav = function () {
 
 timber.drawersInit = function () {
   timber.LeftDrawer = new timber.Drawers('NavDrawer', 'left');
-  
+  {% if settings.cart_type == 'drawer' %}
+    timber.RightDrawer = new timber.Drawers('CartDrawer', 'right', {
+      'onDrawerOpen': ajaxCart.load
+    });
+  {% endif %}
 };
 
 timber.mobileNavToggle = function () {
@@ -675,7 +679,7 @@ var slickTheme = (function(module, $) {
       isTouch        : Modernizr.touch ? true : false,
 
       // Slack options
-      arrows         : true,
+      arrows         : {% if settings.hero_home_arrow %}true{% else %}false{% endif %},
       dots           : true,
       adaptiveHeight : true
     };
@@ -702,8 +706,8 @@ var slickTheme = (function(module, $) {
       adaptiveHeight : settings.fullscreen ? false : settings.adaptiveHeight,
       draggable      : false,
       fade           : true,
-      autoplay       : true,
-      autoplaySpeed  : 5000,
+      autoplay       : {{ settings.hero_home_auto }},
+      autoplaySpeed  : {{ settings.home_hero_auto_speed }},
       onInit         : this.onInit,
       onBeforeChange : this.beforeChange,
       onAfterChange  : this.afterChange
@@ -935,9 +939,9 @@ timberSocial.socialSharing = function () {
   });
 }
 
-
+{% if settings.social_sharing_blog %}
   $(timberSocial.socialSharing);
-
+{% endif %}
 
 
 theme.variables = {
@@ -964,7 +968,7 @@ theme.initCache = function () {
     $collectionImage        : $('.collection-hero__image'),
 
     $siteNav                : $('.site-nav'),
-    $cartBuggle             : $('.cart-link__bubble'),
+    $cartBubble             : $('.cart-link__bubble'),
     $logo                   : $('.site-header__logo img'),
     $toggleSearchModal      : $('.js-toggle-search-modal'),
 
@@ -995,18 +999,20 @@ theme.init = function () {
   theme.afterCartLoad();
   theme.checkoutIndicator();
   theme.collectionParallax();
-  
+  {% if settings.collection_products_grid == 'collage' %}
+    theme.initCollageGrid();
+  {% elsif settings.collection_products_grid == 'grid' %}
     theme.equalHeights();
-  
+  {% endif %}
   theme.collectionBackButton();
   theme.hideSingleSelectors();
   theme.styleTextLinks();
   theme.searchModal();
   theme.stockists();
 
-  
+  {% if settings.product_zoom_enable %}
     theme.productImageZoom();
-  
+  {% endif %}
 
   // Functions to run on load so image sizes can be calculated
   theme.cache.$window.on('load', theme.resizeLogo);
@@ -1048,25 +1054,27 @@ theme.setBreakpoints = function () {
     enquire.register(theme.variables.mediaQuerySmall, {
       match: function () {
         theme.createImageCarousel();
-        
+        {% if settings.collection_products_grid == 'collage' %}
+          theme.clearCollageGridHeights();
+        {% endif %}
         theme.variables.bpSmall = true;
 
-        
+        {% if settings.product_zoom_enable %}
           if (theme.cache.$productImagePhoto.length) {
             // remove event handlers for product zoom on mobile
             theme.cache.$productImagePhoto.off();
           };
-        
+        {% endif %}
       },
       unmatch: function () {
         theme.destroyImageCarousel();
         theme.variables.bpSmall = false;
         theme.initStickyProductMeta();
 
-        
+        {% if settings.product_zoom_enable %}
           // reinit product zoom
           theme.productImageZoom();
-        
+        {% endif %}
       }
     });
   }
@@ -1153,10 +1161,54 @@ theme.afterCartLoad = function () {
     theme.sizeCartDrawerFooter();
 
     // Show cart bubble in nav if items exist
-    if (cart.items.length > 0) {
-      theme.cache.$cartBuggle.addClass('cart-link__bubble--visible');
-    } else {
-      theme.cache.$cartBuggle.removeClass('cart-link__bubble--visible');
+    theme.cache.$cartBubble.text(cart.items.length);
+    theme.cache.$cartBubble.toggleClass('cart-link__bubble--visible', cart.items.length > 0);
+
+    theme.updateHeaderBanner(cart);
+  });
+};
+
+theme.updateHeaderBanner = function(cart) {
+  if (!cart) return;
+
+  var $headerGoal = $('.site-header').find('[data-goal]');
+
+  if (!$headerGoal.length) return;
+
+  // Grab the goal related variables from the DOM
+  var goalAmount = parseFloat($headerGoal.data('goal-amount'));
+  var goalRemainingPre = $headerGoal.data('goal-remaining-pre');
+  var goalRemainingPost = $headerGoal.data('goal-remaining-post');
+  var goalSuccessMessage = $headerGoal.data('goal-success-message');
+  var goalPitch = $headerGoal.data('goal-pitch');
+
+  var cartTotal = cart.original_total_price/100;
+
+  var msg;
+  var remaining;
+
+  if(cartTotal == 0) {
+    msg = goalPitch;
+  }
+  else if(cartTotal >= goalAmount) {
+    msg = goalSuccessMessage;
+  }
+  else {
+    remaining = goalAmount - cartTotal;
+    remaining = remaining * 100; // Shopify works in cents
+    remaining = Shopify.formatMoney(remaining);// Format it nicely
+
+    msg = goalRemainingPre + ' ' + remaining + ' ' + goalRemainingPost;
+  }
+
+  if (msg === $headerGoal.text()) return;
+
+  // Fade out + fade in
+  $headerGoal.fadeOut({
+    duration: 200,
+    complete: function() {
+      $headerGoal.text(msg);
+      $headerGoal.fadeIn();
     }
   });
 };
@@ -1179,7 +1231,7 @@ theme.searchModal = function() {
     closeOnBgClick: true,
     closeBtnInside: false,
     closeOnContentClick: false,
-    tClose: 'Close (Esc)',
+    tClose: '{{ "products.zoom.close" | t }}',
     alignTop: true,
     removalDelay: 500
   });
@@ -1239,14 +1291,14 @@ theme.productImageZoom = function() {
     closeOnBgClick: true,
     closeBtnInside: false,
     closeOnContentClick: true,
-    tClose: 'Close (Esc)',
+    tClose: '{{ "products.zoom.close" | t }}',
     removalDelay: 500,
     gallery: {
       enabled:true,
       navigateByImgClick: false,
       arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"><span class="mfp-chevron mfp-chevron-%dir%"></span></button>',
-      tPrev: 'Previous (Left arrow key)',
-      tNext: 'Next (Right arrow key)'
+      tPrev: '{{ "products.zoom.prev" | t }}',
+      tNext: '{{ "products.zoom.next" | t }}'
     }
   });
 };
@@ -1339,19 +1391,18 @@ theme.clearCollageGridHeights = function () {
   theme.cache.$productGridPhotosLarge.removeAttr('style');
 }
 
-// We don't need this anymore since all images are squares and inline styles suck
 theme.equalHeights = function () {
-  // theme.cache.$window.on('load', resizeElements());
+  theme.cache.$window.on('load', resizeElements());
 
-  // theme.cache.$window.on('resize',
-  //   afterResize(function() {
-  //     resizeElements();
-  //   }, 250, 'equal-heights')
-  // );
+  theme.cache.$window.on('resize',
+    afterResize(function() {
+      resizeElements();
+    }, 250, 'equal-heights')
+  );
 
-  // function resizeElements() {
-  //   theme.cache.$productGridImages.css('height', 'auto').equalHeights();
-  // }
+  function resizeElements() {
+    theme.cache.$productGridImages.css('height', 'auto').equalHeights();
+  }
 };
 
 theme.initStickyProductMeta = function () {
@@ -1494,49 +1545,47 @@ theme.debounce = function(n,t,u){var e;return function(){var a=this,r=arguments,
 // Initialize theme's JS on docready
 $(theme.init);
 
-            
-            $('.add_to_cart').on('click',function(e){
-              e.preventDefault();
-              var main_product_id = $('.product-single__variants option:selected').data('id');
-              var secondary_product_id = $('.extra-product-dropdown option:selected').data('id');
-              //               console.log('------', main_product_id , secondary_product_id);
+{% if settings.cart_type == "page" %}
+  $('.add_to_cart').on('click',function(e){
+    e.preventDefault();
+    var main_product_id = $('.product-single__variants option:selected').data('id');
+    var secondary_product_id = $('.extra-product-dropdown option:selected').data('id');
+    //               console.log('------', main_product_id , secondary_product_id);
 
-              var params = {
-                type: 'POST',
-                url: '/cart/add.js',
-                data: jQuery('.product-single__form').serialize(),
-                dataType: 'json',
-                success: function(line_item) {
-                  console.log('product added');
+    var params = {
+      type: 'POST',
+      url: '/cart/add.js',
+      data: jQuery('.product-single__form').serialize(),
+      dataType: 'json',
+      success: function(line_item) {
+        console.log('product added');
 
-                },
-                error: function(XMLHttpRequest, textStatus) {
-                  console.log('product not added')
-                }
-              };
-              jQuery.ajax(params);
+      },
+      error: function(XMLHttpRequest, textStatus) {
+        console.log('product not added')
+      }
+    };
+    jQuery.ajax(params);
 
 
-              setTimeout(function(){
-                if(secondary_product_id != ""){
-                  $.ajax({
-                    type: 'POST',
-                    url: '/cart/add.js',
-                    data: 'quantity='+1+'&id='+secondary_product_id,
-                    dataType: 'json',
-                    async:false,
-                    success: function() {
-                      console.log('secondary product added')
-
-                    },
-                    error: function(er) {
-                      var err = $.parseJSON(er.responseText);
-                      return false;
-                    }
-                  });
-                }
-                location.replace("/cart");
-              }, 100);
-				
-            })
-            
+    setTimeout(function(){
+      if(secondary_product_id != ""){
+        $.ajax({
+          type: 'POST',
+          url: '/cart/add.js',
+          data: 'quantity='+1+'&id='+secondary_product_id,
+          dataType: 'json',
+          async:false,
+          success: function() {
+            console.log('secondary product added')
+          },
+          error: function(er) {
+            var err = $.parseJSON(er.responseText);
+            return false;
+          }
+        });
+      }
+      location.replace("/cart");
+    }, 100);
+  })
+{% endif %}

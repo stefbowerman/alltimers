@@ -1,0 +1,36 @@
+{%- liquid
+  assign cart_total           = cart.total_price | money_without_currency | times: 1
+  assign goal_amount          = settings.sales_goal_amount | times: 1
+  assign goal_pitch           = settings.sales_goal_pitch
+  assign goal_remaining_pre   = settings.sales_goal_remaining_pre
+  assign goal_remaining_post  = settings.sales_goal_remaining_post
+  assign goal_success_message = settings.sales_goal_success_message
+%}
+
+<div id="CartDrawer" class="drawer drawer--right drawer--has-fixed-footer">
+  <div class="drawer__fixed-header">
+    <div class="drawer__header">
+      <div class="drawer__title">{{ 'cart.general.title' | t }}</div>
+      <div class="drawer__close">
+        <button type="button" class="icon-fallback-text drawer__close-button js-drawer-close">
+          <span class="icon icon-x" aria-hidden="true"></span>
+          <span class="fallback-text">{{ 'cart.general.close_cart' | t }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="drawer__inner">
+    <div
+      id="CartContainer"
+      class="drawer__cart"
+      {% if settings.sales_goal_enabled %}
+        data-goal="true"
+        data-goal-amount="{{ goal_amount }}"
+        data-goal-remaining-pre="{{ goal_remaining_pre }}"
+        data-goal-remaining-post="{{ goal_remaining_post }}"
+        data-goal-success-message="{{ goal_success_message }}"
+        data-goal-pitch="{{ goal_pitch }}"
+      {% endif %}      
+    ></div>
+  </div>
+</div>

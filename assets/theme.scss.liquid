@@ -1181,6 +1181,21 @@ blockquote {
   @include accentFontStack;
 }
 
+.ajaxcart__message {
+  margin-bottom: 0.6em;
+  padding: 10px;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  background-color: white;
+  color: black;  
+
+  p {
+    &:last-child {
+      margin: 0;
+    }
+  }
+}
+
 .ajaxcart__qty-num[type="text"] {
   @include accentFontStack;
   font-style: normal;
