@@ -68,7 +68,7 @@ if (!Shopify.formatMoney) {
   Shopify.formatMoney = function(cents, format) {
     var value = '',
         placeholderRegex = /\{\{\s*(\w+)\s*\}\}/,
-        formatString = (format || this.money_format);
+        formatString = (format || this.money_format || {% raw %}'${{amount}}'{% endraw %});
 
     if (typeof cents == 'string') {
       cents = cents.replace('.','');
@@ -968,7 +968,7 @@ theme.initCache = function () {
     $collectionImage        : $('.collection-hero__image'),
 
     $siteNav                : $('.site-nav'),
-    $cartBuggle             : $('.cart-link__bubble'),
+    $cartBubble             : $('.cart-link__bubble'),
     $logo                   : $('.site-header__logo img'),
     $toggleSearchModal      : $('.js-toggle-search-modal'),
 
@@ -1161,10 +1161,54 @@ theme.afterCartLoad = function () {
     theme.sizeCartDrawerFooter();
 
     // Show cart bubble in nav if items exist
-    if (cart.items.length > 0) {
-      theme.cache.$cartBuggle.addClass('cart-link__bubble--visible');
-    } else {
-      theme.cache.$cartBuggle.removeClass('cart-link__bubble--visible');
+    theme.cache.$cartBubble.text(cart.items.length);
+    theme.cache.$cartBubble.toggleClass('cart-link__bubble--visible', cart.items.length > 0);
+
+    theme.updateHeaderBanner(cart);
+  });
+};
+
+theme.updateHeaderBanner = function(cart) {
+  if (!cart) return;
+
+  var $headerGoal = $('.site-header').find('[data-goal]');
+
+  if (!$headerGoal.length) return;
+
+  // Grab the goal related variables from the DOM
+  var goalAmount = parseFloat($headerGoal.data('goal-amount'));
+  var goalRemainingPre = $headerGoal.data('goal-remaining-pre');
+  var goalRemainingPost = $headerGoal.data('goal-remaining-post');
+  var goalSuccessMessage = $headerGoal.data('goal-success-message');
+  var goalPitch = $headerGoal.data('goal-pitch');
+
+  var cartTotal = cart.original_total_price/100;
+
+  var msg;
+  var remaining;
+
+  if(cartTotal == 0) {
+    msg = goalPitch;
+  }
+  else if(cartTotal >= goalAmount) {
+    msg = goalSuccessMessage;
+  }
+  else {
+    remaining = goalAmount - cartTotal;
+    remaining = remaining * 100; // Shopify works in cents
+    remaining = Shopify.formatMoney(remaining);// Format it nicely
+
+    msg = goalRemainingPre + ' ' + remaining + ' ' + goalRemainingPost;
+  }
+
+  if (msg === $headerGoal.text()) return;
+
+  // Fade out + fade in
+  $headerGoal.fadeOut({
+    duration: 200,
+    complete: function() {
+      $headerGoal.text(msg);
+      $headerGoal.fadeIn();
     }
   });
 };

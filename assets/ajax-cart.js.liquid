@@ -173,6 +173,7 @@ var ajaxCart = (function(module, $) {
 
   // Private plugin variables
   var $formContainer, $addToCart, $cartCountSelector, $cartCostSelector, $cartContainer, $drawerContainer;
+  var goalEnabled, goalAmount, goalRemainingPre, goalRemainingPost, goalSuccessMessage, goalPitch;
 
   // Private functions
   var updateCountPrice, formOverride, itemAddedCallback, itemErrorCallback, cartUpdateCallback, buildCart, cartCallback, adjustCart, adjustCartCallback, qtySelectors, validateQty;
@@ -203,6 +204,14 @@ var ajaxCart = (function(module, $) {
     $addToCart         = $formContainer.find(settings.addToCartSelector);
     $cartCountSelector = $(settings.cartCountSelector);
     $cartCostSelector  = $(settings.cartCostSelector);
+
+    // Get goal vars
+    goalEnabled = !!$cartContainer.data('goal');
+    goalAmount = parseFloat($cartContainer.data('goal-amount'));
+    goalRemainingPre = $cartContainer.data('goal-remaining-pre');
+    goalRemainingPost = $cartContainer.data('goal-remaining-post');
+    goalSuccessMessage = $cartContainer.data('goal-success-message');
+    goalPitch = $cartContainer.data('goal-pitch');
 
     // General Selectors
     $body = $('body');
@@ -283,10 +292,13 @@ var ajaxCart = (function(module, $) {
     // Start with a fresh cart div
     $cartContainer.empty();
 
+    var cartTotal = cart.original_total_price/100;
+    var emptyMessage = {{ 'cart.general.empty' | t | json }};
+
     // Show empty cart
     if (cart.item_count === 0) {
       $cartContainer
-        .append('<p>' + {{ 'cart.general.empty' | t | json }} + '</p>');
+        .append('<p>' + emptyMessage + '</p>');
       cartCallback(cart);
       return;
     }
@@ -343,12 +355,34 @@ var ajaxCart = (function(module, $) {
       items.push(item);
     });
 
+    var goalMessage = null;
+    var goalRemaining = null;
+
+    if (goalEnabled) {
+      if(cartTotal == 0) {
+        goalMessage = goalPitch;
+      }
+      else if(cartTotal >= goalAmount) {
+        goalMessage = goalSuccessMessage;
+      }
+      else {
+        goalRemaining = goalAmount - cartTotal;
+        goalRemaining = goalRemaining * 100; // Shopify works in cents
+        goalRemaining = Shopify.formatMoney(goalRemaining);// Format it nicely
+    
+        goalMessage = goalRemainingPre + ' ' + goalRemaining + ' ' + goalRemainingPost;
+      }
+    }
+
     // Gather all cart data and add to DOM
     data = {
       items: items,
       note: cart.note,
       totalPrice: Shopify.formatMoney(cart.total_price, settings.moneyFormat),
-      totalCartDiscount: cart.total_discount === 0 ? 0 : {{ 'cart.general.savings_html' | t: savings: '[savings]' | json }}.replace('[savings]', Shopify.formatMoney(cart.total_discount, settings.moneyFormat))
+      totalCartDiscount: cart.total_discount === 0 ? 0 : {{ 'cart.general.savings_html' | t: savings: '[savings]' | json }}.replace('[savings]', Shopify.formatMoney(cart.total_discount, settings.moneyFormat)),
+      
+      // Goal Stuff
+      goal_message: goalMessage
     };
 
     $cartContainer.append(template(data));

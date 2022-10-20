@@ -93,10 +93,17 @@
         {{#if totalCartDiscount}}
           <p class="ajaxcart__savings text-center">{{{totalCartDiscount}}}</p>
         {{/if}}
+        {{#if goal_message}}
+          <div class="ajaxcart__message">
+            <p class="text-center">{{ goal_message }}</p>
+          </div>
+        {{/if}}
         <p class="ajaxcart__note text-center">{% endraw %}{{ 'cart.general.shipping_at_checkout' | t }}{% raw %}</p>
-        <button type="submit" class="btn--secondary btn--full cart__checkout" name="checkout">
-          {% endraw %}{{ 'cart.general.checkout' | t }}{% raw %} <span class="icon icon-arrow-right" aria-hidden="true"></span>
-        </button>
+        <p>
+          <button type="submit" class="btn--secondary btn--full cart__checkout" name="checkout">
+            {% endraw %}{{ 'cart.general.checkout' | t }}{% raw %} <span class="icon icon-arrow-right" aria-hidden="true"></span>
+          </button>
+        </p>
       </div>
     </form>
   {% endraw %}

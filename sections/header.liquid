@@ -1,21 +1,32 @@
 <header class="site-header" id="header" role="banner">
   {% if section.settings.banner_enabled %}
     <div class="header-top">
-      {% if section.settings.sales_goal_enabled %}
-        {% assign cart_total           = cart.total_price | money_without_currency | times: 1 %}
-        {% assign goal_amount          = section.settings.sales_goal_amount | times: 1 %}
-        {% assign goal_pitch           = section.settings.sales_goal_pitch %}
-        {% assign goal_remaining_pre   = section.settings.sales_goal_remaining_pre %}
-        {% assign goal_remaining_post  = section.settings.sales_goal_remaining_post %}
-        {% assign goal_success_message = section.settings.sales_goal_success_message %}
+      {% if settings.sales_goal_enabled %}
+        {%- liquid
+          assign cart_total           = cart.total_price | money_without_currency | times: 1
+          assign goal_amount          = settings.sales_goal_amount | times: 1
+          assign goal_pitch           = settings.sales_goal_pitch
+          assign goal_remaining_pre   = settings.sales_goal_remaining_pre
+          assign goal_remaining_post  = settings.sales_goal_remaining_post
+          assign goal_success_message = settings.sales_goal_success_message
+        %}
 
-        {% if cart_total == 0 %}
-          {{ goal_pitch }}
-        {% elsif cart_total > goal_amount %}
-          {{ goal_success_message }}
-        {% else %}
-          {{ goal_remaining_pre }} {{ goal_amount | minus: cart_total | times: 100 | money_without_trailing_zeros }} {{ goal_remaining_post }}
-        {% endif %}
+        {% comment %} We use all these data attributes to update the messaging whenever the ajax cart updates. {% endcomment %}
+        <div 
+          data-goal
+          data-goal-amount="{{ goal_amount }}"
+          data-goal-remaining-pre="{{ goal_remaining_pre }}"
+          data-goal-remaining-post="{{ goal_remaining_post }}"
+          data-goal-success-message="{{ goal_success_message }}"
+          data-goal-pitch="{{ goal_pitch }}">
+          {% if cart_total == 0 %}
+            {{ goal_pitch }}
+          {% elsif cart_total >= goal_amount %}
+            {{ goal_success_message }}
+          {% else %}
+            {{ goal_remaining_pre }} {{ goal_amount | minus: cart_total | times: 100 | money }} {{ goal_remaining_post }}
+          {% endif %}
+        </div>
       {% else %}
         {{ section.settings.banner_content }}
       {% endif %}
@@ -258,46 +269,8 @@
       {
         "type": "header",
         "content": "Sales Motivation",
-        "info": "Create goals for customers to reach a certain cart total.  If this feature is enabled, the above settings will no longer apply."
-      },
-      {
-        "type": "checkbox",
-        "id": "sales_goal_enabled",
-        "label": "Sales Goal Enabled",
-        "default": false
-      },
-      {
-        "type": "text",
-        "id": "sales_goal_amount",
-        "label": "Goal Amount",
-        "info": "This is the cart total you would like to motivate your customers to reach. You should have some type of a reward at this amount such as 'Free Shipping', a 'Free Gift' or something else.",
-        "default": "100.00"
-      },
-      {
-        "type": "textarea",
-        "id": "sales_goal_pitch",
-        "label": "Pitch",
-        "info": "The first time a visitor lands on your store this message will be displayed. It should be something that tells them what the goal is and what they need to spend to get it.",
-        "default": "Free shipping to continental U.S. on orders $100"
-      },
-      {
-        "type": "text",
-        "id": "sales_goal_remaining_pre",
-        "label": "Goal Text (before cart total)",
-        "default": "You are"
-      },
-      {
-        "type": "text",
-        "id": "sales_goal_remaining_post",
-        "label": "Goal Text (after cart total)",
-        "default": "away from receiving free shipping"
-      },
-      {
-        "type": "textarea",
-        "id": "sales_goal_success_message",
-        "label": "Goal Success Message",
-        "default": "You have FREE shipping"
-      }        
+        "info": "Create goals for customers to reach a certain cart total.  Enable this feature in the theme settings.  If this feature is enabled, the above settings will no longer apply."
+      }     
     ]
   }
 {% endschema %}
