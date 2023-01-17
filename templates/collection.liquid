@@ -1,7 +1,8 @@
 <!-- /templates/collection.liquid -->
 
 {% if collection.handle == 'all-products' %}
-  {% section 'collection-video' %}
+  {% comment %}{% section 'collection-video' %}{% endcomment %}
+  {% section 'collection-mystery-boxes' %}
 {% endif %}
 
 {% include 'collection-template' %}

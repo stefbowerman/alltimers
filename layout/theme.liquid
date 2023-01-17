@@ -183,6 +183,7 @@ Add the page template as a class for easy page or template specific styling.
     </main> 
     
     {%- include 'footer' -%}
+    {%- section 'site-background' %}
   </div>
 
   {{ 'themeScript.js' | asset_url | script_tag }}
